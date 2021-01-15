@@ -11,6 +11,11 @@
 #include "mem.h"
 #include "msg.h"
 #include "args.h"
+#include "buffer.h"
+#include "context.h"
+#include "pmodels.h"
+#include "array.h"
+#include "hash.h"
 #include "tm.h"
 
 PARAMETERS *P;
@@ -29,9 +34,9 @@ void InitializeLCG(THREADS *T){
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - C O M P U T E   L C G - - - - - - - - - - - - - -
 
-void ComputeLCG(THREADS *T){
+void ComputeLCF(THREADS *T){
 
- T->value = T->a * T->value + T->b;
+ T->value = T->a * T->value + T->b % T->prime;
 
  return;
  }
@@ -58,6 +63,7 @@ void PrintInformation(void){
   if(P->mode == 3){	
     fprintf(stderr, " Threads (T)    :  %u\n", P->threads);
     fprintf(stderr, " (T) machines   :  %u\n", P->thread_machines);
+    fprintf(stderr, " Context (FCM)  :  %u\n", P->ctx);
     }
 
   fprintf(stderr, " Using seed     :  %u\n", P->seed);
@@ -90,14 +96,31 @@ void Search(void){
   }
 
 ////////////////////////////////////////////////////////////////////////////////
-// - - - - - - - - - - - - - - - - E V A L U A T E - - - - - - - - - - - - - - -
+// - - - - - - - - - - G E T   T A P E   C O M P L E X I T Y - - - - - - - - - -
 
-void Evaluate(TM *T){
+double GetTapeComplexity(TM *TM){
 
-  uint32_t x;
+  double   bits = 0;
+  uint32_t x, n, k;
+  uint8_t  sym;
+  CBUF     *symBuf = CreateCBuffer(BUFFER_SIZE, BGUARD);
+  PModel   *PM = CreatePModel(P->alphabet_size);
+  CModel   *CM = CreateCModel(P->ctx, 1, 0, 0, 0, P->alphabet_size, 0.9, 0.9);
 
+  for(x = TM->tape->minimum_position ; x < TM->tape->maximum_position ; ++x){
+    symBuf->buf[symBuf->idx] = sym = TM->alphabet->string[TM->tape->string[x]];
+    GetPModelIdx(&symBuf->buf[symBuf->idx-1], CM);
+    ComputePModel(CM, PM, CM->pModelIdx, CM->alphaDen);
+    bits += PModelSymbolNats(PM, sym) / M_LN2;
+    UpdateCModelCounter(CM, sym, CM->pModelIdx);
+    UpdateCBuffer(symBuf);
+    }
 
-  return;
+  RemoveCModel(CM);
+  RemovePModel(PM);
+  RemoveCBuffer(symBuf);
+
+  return bits / GetAmplitude(TM->tape);
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,9 +129,8 @@ void Evaluate(TM *T){
 void ComplexityTMs(THREADS T){
 
   uint32_t x, step, machine;
-
   char out[4096];
-  sprintf(out, "%s-%u.inf", "XXXX", T.id+1);
+  sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = fopen(out, "w");
 
   TM *TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_steps, 
@@ -121,17 +143,17 @@ void ComplexityTMs(THREADS T){
       UpdateTM(TM);
       }
     
-    uint32_t amplitude = GetAmplitude(TM->tape);
+    double amplitude = GetAmplitude(TM->tape);
     if(TM->minimum_amplitude < amplitude && TM->maximum_amplitude > amplitude){
-     
-      fprintf(Writter, "%u\t%u\t%u\t", P->seed, P->number_of_states, 
-      P->alphabet_size);
-      
-      for(x = TM->tape->minimum_position ; x < TM->tape->maximum_position ; ++x)
-        fprintf(Writter, "%c", TM->alphabet->string[TM->tape->string[x]]);
-      fprintf(Writter, "\n");
-      
-      //Evaluate(TM);
+    
+      if(!P->complexity) 
+        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t", GetTapeComplexity(TM), P->seed, 
+        P->number_of_states, P->alphabet_size);
+      else
+        fprintf(Writter, "%u\t%u\t%u\t", P->seed, P->number_of_states, 
+	P->alphabet_size);
+
+      PrintTapeInWritter(TM, Writter);    
       }
     }
 
@@ -160,16 +182,12 @@ void ComplexityTop(void){
   pthread_t t[P->threads];
   THREADS *T = (THREADS *) Calloc(P->threads, sizeof(THREADS));
 
+  srand(P->seed);
+  
   for(x = 0 ; x < P->threads ; ++x){
     T[x].id = x;
-
     InitializeLCG(T);
-    
     }
-
-if(!P->seed)
-    P->seed = (uint32_t) time(NULL);
-  srand(P->seed);
 
   CheckInitialState();
 
@@ -202,8 +220,6 @@ void SchoolSimple(void){
   uint32_t x;
   TM *TM;
 
-  if(!P->seed) 
-    P->seed = (uint32_t) time(NULL);
   srand(P->seed);
 
   CheckInitialState();
@@ -223,6 +239,7 @@ void SchoolSimple(void){
   PrintTM(TM);
 
   fprintf(stderr, "\n");
+  
   for(x = 0 ; x < P->max_steps ; ++x){
     UpdateTM(TM);
     if(!P->hide_tape){
@@ -233,8 +250,7 @@ void SchoolSimple(void){
   
   fprintf(stderr, "\n");
 
-  uint8_t *filename = "out.txt";
-  PrintTapeFile(TM, filename);
+  PrintTapeFile(TM, P->output_tm);
 
   RemoveTM(TM);
 
@@ -266,6 +282,7 @@ int32_t main(int argc, char *argv[]){
   P->force            = ArgState (DEF_FORCE,   p, argc, "-f",  "--force");
   P->show_tape        = ArgState (0,           p, argc, "-sa", "--show-all-tape");
   P->hide_tape        = ArgState (0,           p, argc, "-ht", "--hide-tape");
+  P->complexity       = ArgState (0,           p, argc, "-sc", "--skip-complexity");
  
   P->threads          = ArgNumber (DEFT,  p, argc, "-t",  "--threads", 0, 5000);
   P->initial_state    = ArgNumber (RDST,  p, argc, "-is", "--initial-state", 0, 255);
@@ -279,8 +296,14 @@ int32_t main(int argc, char *argv[]){
   P->top              = ArgNumber (5,     p, argc, "-tp", "--top",   0, 100000);
   P->seed             = ArgNumber (0,     p, argc, "-rs", "--seed",  0, 2999999999);
   P->delay            = ArgNumber (50000, p, argc, "-dl", "--delay", 0, 2999999999);
+  P->ctx              = ArgNumber (2,     p, argc, "-co", "--context", 0, 32);
+
+  P->output_tm        = ArgString ("tm.txt",  p, argc, "-ot", "--output-tm");
+  P->output_top       = ArgString ("top.txt", p, argc, "-ox", "--output-top");
 
   fprintf(stderr, "\n");
+
+  if(!P->seed) P->seed = (uint32_t) time(NULL);
 
   switch(P->mode){
     case 1: SchoolSimple   ();  break;

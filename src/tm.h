@@ -55,19 +55,20 @@ TM;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-uint32_t    GetAmplitude    (TAPE *);
-void        PrintTapeFile   (TM *, uint8_t *);
-void        PrintActions    (TM *);
-void        PrintAlphabet   (TM *);
-void        PrintStates     (TM *);
-void        PrintTM         (TM *);
-void        PrintTape       (TM *);
-void        PrintTapePres   (TM *, double);
-TM          *CreateTM       (uint32_t, uint32_t, uint32_t, uint32_t,
-	                     uint32_t, uint8_t, uint32_t);
-uint8_t     RandFillTM      (TM *);
-uint8_t     UpdateTM        (TM *);
-void        RemoveTM        (TM *);
+uint32_t    GetAmplitude       (TAPE *);
+void        PrintTapeFile      (TM *, uint8_t *);
+void        PrintActions       (TM *);
+void        PrintAlphabet      (TM *);
+void        PrintStates        (TM *);
+void        PrintTM            (TM *);
+void        PrintTape          (TM *);
+void        PrintTapeInWritter (TM *, FILE *);
+void        PrintTapePres      (TM *, double);
+TM          *CreateTM          (uint32_t, uint32_t, uint32_t, uint32_t,
+	                        uint32_t, uint8_t, uint32_t);
+uint8_t     RandFillTM         (TM *);
+uint8_t     UpdateTM           (TM *);
+void        RemoveTM           (TM *);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

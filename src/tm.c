@@ -6,8 +6,11 @@
 // - - - - - - - - - - - C A L C U L A T E   A M P L I T U D E - - - - - - - - -
 
 uint32_t GetAmplitude(TAPE *TP){
-  return TP->maximum_position - TP->minimum_position;
+  return TP->maximum_position - TP->minimum_position + 1;
   }
+
+// =============================================================================
+// - - - - - - - - - - - - - - P R I N T   A C T I O N S - - - - - - - - - - - -
 
 void PrintActions(TM *T){
 
@@ -23,21 +26,6 @@ void PrintActions(TM *T){
   }
 
 // =============================================================================
-// - - - - - - - - - - - O U T P U T   T A P E   T O   F I L E - - - - - - - - -
-
-void PrintTapeFile(TM *T, uint8_t *filename){
-  
-  uint32_t x;
-  
-  FILE *OUT = fopen(filename, "w");
-  for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(OUT, "%c", T->alphabet->string[T->tape->string[x]]);
-  fclose(OUT);
-  
-  return;
-  }
-
-// =============================================================================
 // - - - - - - - - - - - - - P R I N T   A L P H A B E T - - - - - - - - - - - -
 
 void PrintAlphabet(TM *T){
@@ -46,8 +34,10 @@ void PrintAlphabet(TM *T){
 
   fprintf(stderr, " Alphabet       : ");
   for(x = 0 ; x < T->alphabet_size ; ++x)
-    if(x == T->alphabet_size-1) fprintf(stderr, " %c",  T->alphabet->string[x]);
-    else                        fprintf(stderr, " %c,", T->alphabet->string[x]);
+    if(x == T->alphabet_size-1) 
+      fprintf(stderr, " %c",  T->alphabet->string[x] + 'A');
+    else 
+      fprintf(stderr, " %c,", T->alphabet->string[x] + 'A');
   fprintf(stderr, "\n");
 
   return;
@@ -70,6 +60,35 @@ void PrintStates(TM *T){
   }
 
 // =============================================================================
+// - - - - - - - - - - - O U T P U T   T A P E   T O   F I L E - - - - - - - - -
+
+void PrintTapeFile(TM *T, uint8_t *filename){
+
+  uint32_t x;
+
+  FILE *OUT = fopen(filename, "w");
+  for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
+    fprintf(OUT, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
+  fclose(OUT);
+
+  return;
+  }
+
+// =============================================================================
+// - - - - - - - - - P R I N T   T A P E   I N   W R I T T E R - - - - - - - - - 
+
+void PrintTapeInWritter(TM *T, FILE *F){
+
+  uint32_t x;
+
+  for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
+    fprintf(F, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
+  fprintf(F, "\n");
+
+  return;
+  }
+
+// =============================================================================
 // - - - - - - - - - - - - - - - P R I N T   T A P E - - - - - - - - - - - - - -
 
 void PrintTape(TM *T){
@@ -77,7 +96,7 @@ void PrintTape(TM *T){
   int x;
 
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(stderr, "%c", T->alphabet->string[T->tape->string[x]]);
+    fprintf(stderr, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
   fprintf(stderr, "\n");
 
   return;
@@ -94,7 +113,7 @@ void PrintTapePres(TM *T, double delay){
 
   fprintf(stderr, " Step [%u] -> Tape: ", T->tape->steps);
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(stderr, "%c", T->alphabet->string[T->tape->string[x]]);
+    fprintf(stderr, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
   fprintf(stderr, "\r");
 
   return;
@@ -114,9 +133,10 @@ void PrintTM(TM *T){
   fprintf(stderr, "\n");
 
   for(x = 0 ; x < T->alphabet_size ; ++x){
-    fprintf(stderr, "%2c\t", T->alphabet->string[x]);
+    fprintf(stderr, "%2c\t", T->alphabet->string[x] + 'A');
     for(y = 0 ; y < T->number_of_states ; ++y){
-      fprintf(stderr, "%2c %c %-2u  ", T->alphabet->string[T->rules[x][y].new_write], 
+      fprintf(stderr, "%2c %c %-2u  ", 
+      T->alphabet->string[T->rules[x][y].new_write] + 'A', 
       T->rules[x][y].move, T->rules[x][y].new_state);
       }
     fprintf(stderr, "\n");
@@ -170,7 +190,7 @@ TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states,
   
   T->alphabet->string = (uint8_t *) Calloc(256, sizeof(uint8_t));
   for(x = 0 ; x < T->alphabet_size ; ++x)
-    T->alphabet->string[x] = (uint8_t) x + 'A';
+    T->alphabet->string[x] = (uint8_t) x;
   
   return T;
   }

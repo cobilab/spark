@@ -11,5 +11,6 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 SET(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 SET(CMAKE_BUILD_TYPE Release)
 
-add_executable (SPARK spark.c mem.c msg.c args.c tm.c defs.h)
+add_executable (SPARK spark.c mem.c msg.c args.c buffer.c context.c pmodels.c array.c tolerant.c hash.c tm.c defs.h)
+
 TARGET_LINK_LIBRARIES(SPARK pthread)

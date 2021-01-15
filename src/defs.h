@@ -35,10 +35,12 @@ typedef struct{
   uint32_t  max_amplitude;
   uint32_t  min_amplitude;
   uint8_t   mode;
+  uint8_t   complexity;
   uint32_t  seed;
   uint32_t  delay;
-  char      *filename;
-  char      *output;
+  uint32_t  ctx;
+  char      *output_top;
+  char      *output_tm;
   }
 PARAMETERS;
 
@@ -47,6 +49,7 @@ typedef struct{
   uint32_t  a;
   uint32_t  b;
   uint32_t  seed;
+  uint32_t  prime;
   uint32_t  value;
   }
 THREADS;
