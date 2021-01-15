@@ -130,7 +130,7 @@ void PrintTM(TM *T){
 
 TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states, 
              uint32_t maximum_steps, uint32_t maximum_amplitude, 
-	     uint8_t mode, uint32_t initial_state){
+	 uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state){
   
   uint32_t x;
 
@@ -140,6 +140,7 @@ TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states,
   T->number_of_states  = number_of_states;
   T->maximum_steps     = maximum_steps;
   T->maximum_amplitude = maximum_amplitude;
+  T->minimum_amplitude = minimum_amplitude;
   T->initial_state     = initial_state;
   T->current_state     = T->initial_state;
   T->mode              = mode;

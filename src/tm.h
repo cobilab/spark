@@ -46,6 +46,7 @@ typedef struct{
   uint32_t  number_of_states;
   uint32_t  maximum_steps;
   uint32_t  maximum_amplitude;
+  uint32_t  minimum_amplitude;
   uint32_t  current_state;
   uint32_t  initial_state;
   uint8_t   mode;
@@ -63,7 +64,7 @@ void        PrintTM         (TM *);
 void        PrintTape       (TM *);
 void        PrintTapePres   (TM *, double);
 TM          *CreateTM       (uint32_t, uint32_t, uint32_t, uint32_t,
-	                     uint8_t, uint32_t);
+	                     uint32_t, uint8_t, uint32_t);
 uint8_t     RandFillTM      (TM *);
 uint8_t     UpdateTM        (TM *);
 void        RemoveTM        (TM *);

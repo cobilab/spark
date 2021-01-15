@@ -13,22 +13,33 @@
 #include "args.h"
 #include "tm.h"
 
-/*
+PARAMETERS *P;
+
 ////////////////////////////////////////////////////////////////////////////////
-// - - - - - - - - - - - - - F   T H R E A D I N G - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - I N I T I A L I Z E   L C G - - - - - - - - - - - -
 
-void *CompressThread(void *Thr){
-  Threads *T = (Threads *) Thr;
-  CompressTarget(T[0]);
-  pthread_exit(NULL);
-  }
-*/
+void InitializeLCG(THREADS *T){
 
+ T->value = T->seed;
+
+ return;
+ }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - - - - C O M P U T E   L C G - - - - - - - - - - - - - -
+
+void ComputeLCG(THREADS *T){
+
+ T->value = T->a * T->value + T->b;
+
+ return;
+ }
 
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - C H E C K   I N I T I A L   S T A T E - - - - - - - - - -
 
-void CheckInitialState(PARAMETERS *P){
+void CheckInitialState(void){
 
   if(P->initial_state >= P->number_of_states && P->initial_state != RDST){
     fprintf(stderr, "Error: the initial state must be less than the number"
@@ -42,11 +53,17 @@ void CheckInitialState(PARAMETERS *P){
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - P R I N T   I N F O R M A T I O N - - - - - - - - - - -
 
-void PrintInformation(PARAMETERS *P){
-  
+void PrintInformation(void){
+ 
+  if(P->mode == 3){	
+    fprintf(stderr, " Threads (T)    :  %u\n", P->threads);
+    fprintf(stderr, " (T) machines   :  %u\n", P->thread_machines);
+    }
+
   fprintf(stderr, " Using seed     :  %u\n", P->seed);
   fprintf(stderr, " Max steps      :  %u\n", P->max_steps);
   fprintf(stderr, " Max amplitude  :  %u\n", P->max_amplitude);
+  fprintf(stderr, " Min amplitude  :  %u\n", P->min_amplitude);
   fprintf(stderr, " Init state     :  %u\n", P->initial_state);
 
   return;
@@ -55,7 +72,7 @@ void PrintInformation(PARAMETERS *P){
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - - I M P O S S I B L E - - - - - - - - - - - - - -
 
-void Impossible(PARAMETERS *P){
+void Impossible(void){
 
   THREADS *T;
 
@@ -65,7 +82,7 @@ void Impossible(PARAMETERS *P){
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - - - - S E A R C H - - - - - - - - - - - - - - - -
 
-void Search(PARAMETERS *P){
+void Search(void){
 
   THREADS *T;
 
@@ -73,57 +90,105 @@ void Search(PARAMETERS *P){
   }
 
 ////////////////////////////////////////////////////////////////////////////////
-// - - - - - - - - - - - - - C O M P L E X I T Y   T O P - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - E V A L U A T E - - - - - - - - - - - - - - -
 
-void ComplexityTop(PARAMETERS *P){
-
-  THREADS *T;
-
+void Evaluate(TM *T){
 
   uint32_t x;
-  TM *TM;
-
-  if(!P->seed)
-    P->seed = (uint32_t) time(NULL);
-  srand(P->seed);
-
-  CheckInitialState(P);
-
-  if(P->initial_state == RDST) P->initial_state = rand() % P->number_of_states;
-
-  PrintInformation(P);
-
-  TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_steps,
-                P->max_amplitude, P->mode, P->initial_state);
-
-  
 
 
-  for(machine = 0 ; machine < P->threads ; ++machine){
+  return;
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - C O M P L E X I T Y   T H R E A D S - - - - - - - - - - -
+
+void ComplexityTMs(THREADS T){
+
+  uint32_t x, step, machine;
+
+  char out[4096];
+  sprintf(out, "%s-%u.inf", "XXXX", T.id+1);
+  FILE *Writter = fopen(out, "w");
+
+  TM *TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_steps, 
+           P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+
+  for(machine = 0 ; machine < P->thread_machines ; ++machine){
     
-
     RandFillTM(TM);
-
     for(step = 0 ; step < P->max_steps ; ++step){
       UpdateTM(TM);
       }
     
-    //Evaluate(TM);
+    uint32_t amplitude = GetAmplitude(TM->tape);
+    if(TM->minimum_amplitude < amplitude && TM->maximum_amplitude > amplitude){
+     
+      fprintf(Writter, "%u\t%u\t%u\t", P->seed, P->number_of_states, 
+      P->alphabet_size);
+      
+      for(x = TM->tape->minimum_position ; x < TM->tape->maximum_position ; ++x)
+        fprintf(Writter, "%c", TM->alphabet->string[TM->tape->string[x]]);
+      fprintf(Writter, "\n");
+      
+      //Evaluate(TM);
+      }
     }
 
-
-  uint8_t *filename = "out.txt";
-  PrintTapeFile(TM, filename);
-
   RemoveTM(TM);
+
+  fclose(Writter);
   
+  return;
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - - - - - C   T H R E A D I N G - - - - - - - - - - - - -
+
+void *ComplexityThread(void *Thr){
+  THREADS *T = (THREADS *) Thr;
+  ComplexityTMs(T[0]);
+  pthread_exit(NULL);
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - - - C O M P L E X I T Y   T O P - - - - - - - - - - - -
+
+void ComplexityTop(void){
+  
+  uint32_t x;
+  pthread_t t[P->threads];
+  THREADS *T = (THREADS *) Calloc(P->threads, sizeof(THREADS));
+
+  for(x = 0 ; x < P->threads ; ++x){
+    T[x].id = x;
+
+    InitializeLCG(T);
+    
+    }
+
+if(!P->seed)
+    P->seed = (uint32_t) time(NULL);
+  srand(P->seed);
+
+  CheckInitialState();
+
+  if(P->initial_state == RDST) P->initial_state = rand() % P->number_of_states;
+
+  PrintInformation();
+
+  for(x = 0 ; x < P->threads ; ++x)
+    pthread_create(&(t[x+1]), NULL, ComplexityThread, (void *) &(T[x]));
+  for(x = 0 ; x < P->threads ; ++x) // DO NOT JOIN FORS!
+    pthread_join(t[x+1], NULL);
+
   return;
   }
 
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - S C H O O L   A D V A N C E D - - - - - - - - - - - -
 
-void SchoolAdvanced(PARAMETERS *P){
+void SchoolAdvanced(void){
 
 
   return;
@@ -132,7 +197,7 @@ void SchoolAdvanced(PARAMETERS *P){
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - S C H O O L   S I M P L E - - - - - - - - - - - -
 
-void SchoolSimple(PARAMETERS *P){
+void SchoolSimple(void){
 
   uint32_t x;
   TM *TM;
@@ -141,14 +206,14 @@ void SchoolSimple(PARAMETERS *P){
     P->seed = (uint32_t) time(NULL);
   srand(P->seed);
 
-  CheckInitialState(P);
+  CheckInitialState();
 
   if(P->initial_state == RDST) P->initial_state = rand() % P->number_of_states;
 
-  PrintInformation(P);
+  PrintInformation();
 
   TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_steps,
-                P->max_amplitude, P->mode, P->initial_state);
+                P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
   RandFillTM(TM);
 
@@ -186,7 +251,7 @@ int32_t main(int argc, char *argv[]){
   char    **p = *&argv;
   clock_t stop = 0, start = clock();
 
-  PARAMETERS *P = (PARAMETERS *) Malloc(1 * sizeof(PARAMETERS));
+  P = (PARAMETERS *) Malloc(1 * sizeof(PARAMETERS));
   if((P->help = ArgState(DEF_HELP, p, argc, "-h", "--help")) == 1 || argc < 2){
     PrintMenu();
     return EXIT_SUCCESS;
@@ -202,10 +267,13 @@ int32_t main(int argc, char *argv[]){
   P->show_tape        = ArgState (0,           p, argc, "-sa", "--show-all-tape");
   P->hide_tape        = ArgState (0,           p, argc, "-ht", "--hide-tape");
  
+  P->threads          = ArgNumber (DEFT,  p, argc, "-t",  "--threads", 0, 5000);
   P->initial_state    = ArgNumber (RDST,  p, argc, "-is", "--initial-state", 0, 255);
   P->alphabet_size    = ArgNumber (4,     p, argc, "-as", "--alphabet-size", 2, 254);
   P->number_of_states = ArgNumber (7,     p, argc, "-sn", "--states-number", 1, 99);
   P->max_steps        = ArgNumber (10000, p, argc, "-ms", "--max-steps", 1, 2999999999);
+  P->thread_machines  = ArgNumber (10000, p, argc, "-tm", "--machines", 1, 2999999999);
+  P->min_amplitude    = ArgNumber (50,    p, argc, "-ia", "--min-amplitude", 1, 2999999999);
   P->max_amplitude    = ArgNumber (20000, p, argc, "-ma", "--max-amplitude", 1, 2999999999);
   P->mode             = ArgNumber (1,     p, argc, "-md", "--mode",  1, 5);
   P->top              = ArgNumber (5,     p, argc, "-tp", "--top",   0, 100000);
@@ -215,11 +283,11 @@ int32_t main(int argc, char *argv[]){
   fprintf(stderr, "\n");
 
   switch(P->mode){
-    case 1: SchoolSimple   (P);  break;
-    case 2: SchoolAdvanced (P);  break;
-    case 3: ComplexityTop  (P);  break;
-    case 4: Search         (P);  break;
-    case 5: Impossible     (P);  break;
+    case 1: SchoolSimple   ();  break;
+    case 2: SchoolAdvanced ();  break;
+    case 3: ComplexityTop  ();  break;
+    case 4: Search         ();  break;
+    case 5: Impossible     ();  break;
     default: fprintf(stderr, "Error: unknown mode!\n"); exit(1); break;
     }
 

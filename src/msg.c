@@ -57,7 +57,7 @@ void PrintMenu(void){
   "     Copyright 2017-2021, D. Pratas, IEETA, University of Aveiro.    \n"
   "     License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>.    \n"
   "                                                                     \n",
-  VERSION, RELEASE, DEF_THREADS);
+  VERSION, RELEASE, DEFT);
   }
 
 void PrintVersion(void){

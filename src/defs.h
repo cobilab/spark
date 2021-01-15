@@ -31,7 +31,9 @@ typedef struct{
   uint32_t  alphabet_size;
   uint32_t  number_of_states;
   uint32_t  max_steps;
+  uint32_t  thread_machines;
   uint32_t  max_amplitude;
+  uint32_t  min_amplitude;
   uint8_t   mode;
   uint32_t  seed;
   uint32_t  delay;
@@ -42,6 +44,10 @@ PARAMETERS;
 
 typedef struct{
   uint32_t  id;
+  uint32_t  a;
+  uint32_t  b;
+  uint32_t  seed;
+  uint32_t  value;
   }
 THREADS;
 
@@ -54,11 +60,11 @@ THREADS;
 
 #define DEF_VERSION            0
 #define DEF_THRESHOLD          0.5
-#define DEF_THREADS            8
 #define DEF_HELP               0
 #define DEF_VERBOSE            0
 #define DEF_FORCE              0
 #define RDST                   255
+#define DEFT                   4
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
