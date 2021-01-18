@@ -24,13 +24,14 @@ typedef struct{
   U8        show_tape;
   U8        hide_tape;
   U8        show_action;
+  U8        hide_rules;
   int32_t   initial_state;
   uint32_t  top;
   uint32_t  threads;
   double    threshold;
   uint32_t  alphabet_size;
   uint32_t  number_of_states;
-  uint32_t  max_steps;
+  uint32_t  max_time;
   uint32_t  thread_machines;
   uint32_t  max_amplitude;
   uint32_t  min_amplitude;
@@ -39,18 +40,18 @@ typedef struct{
   uint32_t  seed;
   uint32_t  delay;
   uint32_t  ctx;
+  uint32_t  lcf_value;
+  uint32_t  lcf_a;
+  uint32_t  lcf_b;
+  uint32_t  lcf_prime;
   char      *output_top;
-  char      *output_tm;
+  char      *output_tape;
+  char      *input_rules;
   }
 PARAMETERS;
 
 typedef struct{
   uint32_t  id;
-  uint32_t  a;
-  uint32_t  b;
-  uint32_t  seed;
-  uint32_t  prime;
-  uint32_t  value;
   }
 THREADS;
 

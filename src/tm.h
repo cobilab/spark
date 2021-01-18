@@ -21,7 +21,7 @@ typedef struct{
   uint32_t  length;
   uint8_t   *string;    
   uint32_t  current_position;
-  uint64_t  steps;
+  uint64_t  time;
   }
 TAPE;
 
@@ -44,7 +44,7 @@ typedef struct{
   uint8_t   *moves;
   uint32_t  alphabet_size;
   uint32_t  number_of_states;
-  uint32_t  maximum_steps;
+  uint32_t  maximum_time;
   uint32_t  maximum_amplitude;
   uint32_t  minimum_amplitude;
   uint32_t  current_state;
@@ -55,20 +55,22 @@ TM;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-uint32_t    GetAmplitude       (TAPE *);
-void        PrintTapeFile      (TM *, uint8_t *);
-void        PrintActions       (TM *);
-void        PrintAlphabet      (TM *);
-void        PrintStates        (TM *);
-void        PrintTM            (TM *);
-void        PrintTape          (TM *);
-void        PrintTapeInWritter (TM *, FILE *);
-void        PrintTapePres      (TM *, double);
-TM          *CreateTM          (uint32_t, uint32_t, uint32_t, uint32_t,
-	                        uint32_t, uint8_t, uint32_t);
-uint8_t     RandFillTM         (TM *);
-uint8_t     UpdateTM           (TM *);
-void        RemoveTM           (TM *);
+uint32_t    GetAmplitude         (TAPE *);
+void        PrintTapeFile        (TM *, uint8_t *);
+void        PrintActions         (TM *);
+void        PrintAlphabet        (TM *);
+void        PrintStates          (TM *);
+void        PrintTM              (TM *);
+void        PrintTape            (TM *);
+void        PrintTapeInWritter   (TM *, FILE *);
+void        PrintRulesInWritter  (TM *, FILE *);
+void        PrintTapePres        (TM *, double);
+TM          *CreateTM            (uint32_t, uint32_t, uint32_t, uint32_t,
+	                          uint32_t, uint8_t, uint32_t);
+void        LoadTMRules          (TM *, uint8_t *);
+uint8_t     RandFillTM           (TM *);
+uint8_t     UpdateTM             (TM *);
+void        RemoveTM             (TM *);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

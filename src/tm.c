@@ -69,6 +69,7 @@ void PrintTapeFile(TM *T, uint8_t *filename){
   FILE *OUT = fopen(filename, "w");
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
     fprintf(OUT, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
+  fprintf(OUT, "\n");
   fclose(OUT);
 
   return;
@@ -85,6 +86,58 @@ void PrintTapeInWritter(TM *T, FILE *F){
     fprintf(F, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
   fprintf(F, "\n");
 
+  return;
+  }
+
+// =============================================================================
+// - - - - - - - - - P R I N T   R U L E S   I N   W R I T T E R - - - - - - - -
+
+void PrintRulesInWritter(TM *T, FILE *F){
+
+  uint32_t x, y;
+
+  for(x = 0 ; x < T->alphabet_size ; ++x){
+    for(y = 0 ; y < T->number_of_states ; ++y){
+      fprintf(F, "%u%c%u,",
+      T->alphabet->string[T->rules[x][y].new_write],
+      T->rules[x][y].move, T->rules[x][y].new_state);
+      }
+    }
+
+  fprintf(F, "\t");
+
+  return;
+  }
+
+// =============================================================================
+// - - - - - - - - - - - - L O A D   R U L E S   I N   T M - - - - - - - - - - -
+
+void LoadTMRules(TM *T, uint8_t *name){
+
+  uint32_t n, x = 0, y = 0, idx = 0, new_write, new_state;
+  uint8_t c, rule[20], move;
+
+  FILE *F = fopen(name, "r");
+ 
+  while((c = fgetc(F)) != EOF && c != '\n' && c != ' '){
+    rule[idx++] = c;
+    if(c == ','){  
+      rule[idx] = '\0';
+      idx = 0;
+      if(sscanf(rule, "%u%c%u,", &new_write, &move, &new_state) == 3){
+        T->rules[x][y].new_write = new_write;
+        T->rules[x][y].move      = move;
+        T->rules[x][y].new_state = new_state;
+        if(++y == T->number_of_states){
+          y = 0;	
+	  ++x;
+          }
+        }
+      }
+    }
+
+  fclose(F);
+  
   return;
   }
 
@@ -111,7 +164,7 @@ void PrintTapePres(TM *T, double delay){
 
   usleep(delay);
 
-  fprintf(stderr, " Step [%u] -> Tape: ", T->tape->steps);
+  fprintf(stderr, " Time [%u] | Tape: ", T->tape->time);
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
     fprintf(stderr, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
   fprintf(stderr, "\r");
@@ -149,7 +202,7 @@ void PrintTM(TM *T){
 // - - - - - - - - - - - - - - - C R E A T E   T M - - - - - - - - - - - - - - -
 
 TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states, 
-             uint32_t maximum_steps, uint32_t maximum_amplitude, 
+             uint32_t maximum_time, uint32_t maximum_amplitude, 
 	 uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state){
   
   uint32_t x;
@@ -158,7 +211,7 @@ TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states,
 
   T->alphabet_size     = alphabet_size;
   T->number_of_states  = number_of_states;
-  T->maximum_steps     = maximum_steps;
+  T->maximum_time      = maximum_time;
   T->maximum_amplitude = maximum_amplitude;
   T->minimum_amplitude = minimum_amplitude;
   T->initial_state     = initial_state;
@@ -175,12 +228,12 @@ TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states,
 
   T->tape = (TAPE *) Calloc(1, sizeof(TAPE));
 
-  assert(T->maximum_steps > T->tape->guard);
+  assert(T->maximum_time > T->tape->guard);
 
-  T->tape->steps            = 0;
+  T->tape->time            = 0;
   T->tape->guard            = DEFAULT_TAPE_GUARD;
-  T->tape->length           = T->maximum_steps * 2 + 1;
-  T->tape->current_position = T->maximum_steps + 1;
+  T->tape->length           = T->maximum_time * 2 + 1;
+  T->tape->current_position = T->maximum_time + 1;
   T->tape->minimum_position = T->tape->current_position - T->tape->guard;
   T->tape->maximum_position = T->tape->current_position + T->tape->guard;
   T->tape->string           = (uint8_t *) Calloc(T->tape->length + T->tape->guard, 
@@ -200,7 +253,7 @@ TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states,
 
 uint8_t UpdateTM(TM *T){
 
-  if(T->tape->steps > T->maximum_steps || 
+  if(T->tape->time > T->maximum_time || 
      T->maximum_amplitude < GetAmplitude(T->tape))
     return 1;
   else if(T->tape->current_position == T->tape->length || 
@@ -227,7 +280,7 @@ uint8_t UpdateTM(TM *T){
   if(T->tape->current_position < T->tape->minimum_position)
     T->tape->minimum_position = T->tape->current_position;
 
-  T->tape->steps++;
+  T->tape->time++;
 
   return 0;
   }
@@ -247,11 +300,11 @@ uint8_t RandFillTM(TM *T){
       }
 
   T->tape->guard            = DEFAULT_TAPE_GUARD;
-  T->tape->length           = T->maximum_steps * 2 + 1;
-  T->tape->current_position = T->maximum_steps + 1;
+  T->tape->length           = T->maximum_time * 2 + 1;
+  T->tape->current_position = T->maximum_time + 1;
   T->tape->minimum_position = T->tape->current_position - T->tape->guard;
   T->tape->maximum_position = T->tape->current_position + T->tape->guard;
-  T->tape->steps            = 0;
+  T->tape->time             = 0;
 
   memset((void *) T->tape->string, 0, T->tape->length + 
 		  T->tape->guard * sizeof(char));

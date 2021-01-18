@@ -21,27 +21,6 @@
 PARAMETERS *P;
 
 ////////////////////////////////////////////////////////////////////////////////
-// - - - - - - - - - - - - - I N I T I A L I Z E   L C G - - - - - - - - - - - -
-
-void InitializeLCG(THREADS *T){
-
- T->value = T->seed;
-
- return;
- }
-
-
-////////////////////////////////////////////////////////////////////////////////
-// - - - - - - - - - - - - - - C O M P U T E   L C G - - - - - - - - - - - - - -
-
-void ComputeLCF(THREADS *T){
-
- T->value = T->a * T->value + T->b % T->prime;
-
- return;
- }
-
-////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - C H E C K   I N I T I A L   S T A T E - - - - - - - - - -
 
 void CheckInitialState(void){
@@ -67,10 +46,11 @@ void PrintInformation(void){
     }
 
   fprintf(stderr, " Using seed     :  %u\n", P->seed);
-  fprintf(stderr, " Max steps      :  %u\n", P->max_steps);
+  fprintf(stderr, " Max time       :  %u\n", P->max_time);
   fprintf(stderr, " Max amplitude  :  %u\n", P->max_amplitude);
   fprintf(stderr, " Min amplitude  :  %u\n", P->min_amplitude);
   fprintf(stderr, " Init state     :  %u\n", P->initial_state);
+  fprintf(stderr, " Threshold      :  %.3lf\n", P->threshold);
 
   return;
   }
@@ -120,7 +100,7 @@ double GetTapeComplexity(TM *TM){
   RemovePModel(PM);
   RemoveCBuffer(symBuf);
 
-  return bits / GetAmplitude(TM->tape);
+  return bits / (GetAmplitude(TM->tape) * log2(P->alphabet_size));
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,37 +108,43 @@ double GetTapeComplexity(TM *TM){
 
 void ComplexityTMs(THREADS T){
 
-  uint32_t x, step, machine;
+  uint32_t x, time, machine, initial_state = 0;
   char out[4096];
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = fopen(out, "w");
 
-  TM *TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_steps, 
+  TM *TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_time, 
            P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+
+  fprintf(Writter, "NC\tSeed\tTime\tStates\tAlphabet\tInitState\tRules\tTape\n");
 
   for(machine = 0 ; machine < P->thread_machines ; ++machine){
     
+    initial_state = TM->current_state;
     RandFillTM(TM);
-    for(step = 0 ; step < P->max_steps ; ++step){
+    
+    for(time = 0 ; time < P->max_time ; ++time){
       UpdateTM(TM);
       }
     
     double amplitude = GetAmplitude(TM->tape);
     if(TM->minimum_amplitude < amplitude && TM->maximum_amplitude > amplitude){
-    
-      if(!P->complexity) 
-        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t", GetTapeComplexity(TM), P->seed, 
-        P->number_of_states, P->alphabet_size);
-      else
-        fprintf(Writter, "%u\t%u\t%u\t", P->seed, P->number_of_states, 
-	P->alphabet_size);
 
-      PrintTapeInWritter(TM, Writter);    
+      double complexity = GetTapeComplexity(TM);
+
+      if(complexity > P->threshold){      
+    
+        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", complexity, 
+	P->seed, TM->maximum_time, TM->number_of_states, TM->alphabet_size, initial_state);
+
+        if(!P->hide_rules) 
+	  PrintRulesInWritter(TM, Writter);
+        PrintTapeInWritter(TM, Writter);
+        }
       }
     }
 
   RemoveTM(TM);
-
   fclose(Writter);
   
   return;
@@ -182,19 +168,16 @@ void ComplexityTop(void){
   pthread_t t[P->threads];
   THREADS *T = (THREADS *) Calloc(P->threads, sizeof(THREADS));
 
-  srand(P->seed);
-  
-  for(x = 0 ; x < P->threads ; ++x){
+  for(x = 0 ; x < P->threads ; ++x)
     T[x].id = x;
-    InitializeLCG(T);
-    }
 
   CheckInitialState();
 
+  srand(P->seed);
   if(P->initial_state == RDST) P->initial_state = rand() % P->number_of_states;
 
   PrintInformation();
-
+  
   for(x = 0 ; x < P->threads ; ++x)
     pthread_create(&(t[x+1]), NULL, ComplexityThread, (void *) &(T[x]));
   for(x = 0 ; x < P->threads ; ++x) // DO NOT JOIN FORS!
@@ -218,30 +201,32 @@ void SchoolAdvanced(void){
 void SchoolSimple(void){
 
   uint32_t x;
-  TM *TM;
-
-  srand(P->seed);
 
   CheckInitialState();
 
+  srand(P->seed);
   if(P->initial_state == RDST) P->initial_state = rand() % P->number_of_states;
 
   PrintInformation();
 
-  TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_steps,
-                P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+  TM *TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_time,
+	   P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
-  RandFillTM(TM);
+  if(strcmp(P->input_rules, "-"))
+    LoadTMRules(TM, P->input_rules);
+  else 
+    RandFillTM(TM);
 
-  PrintAlphabet(TM);
-  PrintStates(TM);
-  PrintActions(TM);
-  PrintTM(TM);
+  PrintAlphabet (TM);
+  PrintStates   (TM);
+  PrintActions  (TM);
+  PrintTM       (TM);
 
   fprintf(stderr, "\n");
   
-  for(x = 0 ; x < P->max_steps ; ++x){
+  for(x = 0 ; x < TM->maximum_time ; ++x){
     UpdateTM(TM);
+
     if(!P->hide_tape){
       if(P->show_tape) PrintTape(TM);
       else             PrintTapePres(TM, P->delay);
@@ -250,7 +235,7 @@ void SchoolSimple(void){
   
   fprintf(stderr, "\n");
 
-  PrintTapeFile(TM, P->output_tm);
+  if(strcmp(P->output_tape, "-")) PrintTapeFile(TM, P->output_tape);
 
   RemoveTM(TM);
 
@@ -283,12 +268,13 @@ int32_t main(int argc, char *argv[]){
   P->show_tape        = ArgState (0,           p, argc, "-sa", "--show-all-tape");
   P->hide_tape        = ArgState (0,           p, argc, "-ht", "--hide-tape");
   P->complexity       = ArgState (0,           p, argc, "-sc", "--skip-complexity");
+  P->hide_rules       = ArgState (0,           p, argc, "-hr", "--hide-rules");
  
   P->threads          = ArgNumber (DEFT,  p, argc, "-t",  "--threads", 0, 5000);
   P->initial_state    = ArgNumber (RDST,  p, argc, "-is", "--initial-state", 0, 255);
   P->alphabet_size    = ArgNumber (4,     p, argc, "-as", "--alphabet-size", 2, 254);
   P->number_of_states = ArgNumber (7,     p, argc, "-sn", "--states-number", 1, 99);
-  P->max_steps        = ArgNumber (10000, p, argc, "-ms", "--max-steps", 1, 2999999999);
+  P->max_time         = ArgNumber (10000, p, argc, "-ms", "--max-time", 1, 2999999999);
   P->thread_machines  = ArgNumber (10000, p, argc, "-tm", "--machines", 1, 2999999999);
   P->min_amplitude    = ArgNumber (50,    p, argc, "-ia", "--min-amplitude", 1, 2999999999);
   P->max_amplitude    = ArgNumber (20000, p, argc, "-ma", "--max-amplitude", 1, 2999999999);
@@ -297,9 +283,11 @@ int32_t main(int argc, char *argv[]){
   P->seed             = ArgNumber (0,     p, argc, "-rs", "--seed",  0, 2999999999);
   P->delay            = ArgNumber (50000, p, argc, "-dl", "--delay", 0, 2999999999);
   P->ctx              = ArgNumber (2,     p, argc, "-co", "--context", 0, 32);
+  P->threshold        = ArgDouble (0,     p, argc, "-th", "--threshold");
 
-  P->output_tm        = ArgString ("tm.txt",  p, argc, "-ot", "--output-tm");
+  P->output_tape      = ArgString ("-",       p, argc, "-ot", "--output-tape");
   P->output_top       = ArgString ("top.txt", p, argc, "-ox", "--output-top");
+  P->input_rules      = ArgString ("-",       p, argc, "-ir", "--input-rules");
 
   fprintf(stderr, "\n");
 
@@ -314,10 +302,10 @@ int32_t main(int argc, char *argv[]){
     default: fprintf(stderr, "Error: unknown mode!\n"); exit(1); break;
     }
 
+  fprintf(stderr, "\n");
+
   stop = clock();
-  fprintf(stderr, "\n");
-  fprintf(stdout, " Spent %g sec.\n", ((double)(stop-start)) / CLOCKS_PER_SEC);
-  fprintf(stderr, "\n");
+  fprintf(stdout, " Spent %g sec.\n\n", ((double)(stop-start))/CLOCKS_PER_SEC);
 
   return EXIT_SUCCESS;
   }
