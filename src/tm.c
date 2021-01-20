@@ -35,9 +35,9 @@ void PrintAlphabet(TM *T){
   fprintf(stderr, " Alphabet       : ");
   for(x = 0 ; x < T->alphabet_size ; ++x)
     if(x == T->alphabet_size-1) 
-      fprintf(stderr, " %c",  T->alphabet->string[x] + 'A');
+      fprintf(stderr, " %c",  T->alphabet->out_string[x]);
     else 
-      fprintf(stderr, " %c,", T->alphabet->string[x] + 'A');
+      fprintf(stderr, " %c,", T->alphabet->out_string[x]);
   fprintf(stderr, "\n");
 
   return;
@@ -68,7 +68,7 @@ void PrintTapeFile(TM *T, uint8_t *filename){
 
   FILE *OUT = fopen(filename, "w");
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(OUT, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
+    fprintf(OUT, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(OUT, "\n");
   fclose(OUT);
 
@@ -83,7 +83,7 @@ void PrintTapeInWritter(TM *T, FILE *F){
   uint32_t x;
 
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(F, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
+    fprintf(F, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(F, "\n");
 
   return;
@@ -149,7 +149,7 @@ void PrintTape(TM *T){
   int x;
 
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(stderr, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
+    fprintf(stderr, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(stderr, "\n");
 
   return;
@@ -166,7 +166,7 @@ void PrintTapePres(TM *T, double delay){
 
   fprintf(stderr, " Time [%u] | Tape: ", T->tape->time);
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(stderr, "%c", T->alphabet->string[T->tape->string[x]] + 'A');
+    fprintf(stderr, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(stderr, "\r");
 
   return;
@@ -186,10 +186,10 @@ void PrintTM(TM *T){
   fprintf(stderr, "\n");
 
   for(x = 0 ; x < T->alphabet_size ; ++x){
-    fprintf(stderr, "%2c\t", T->alphabet->string[x] + 'A');
+    fprintf(stderr, "%2c\t", T->alphabet->out_string[x]);
     for(y = 0 ; y < T->number_of_states ; ++y){
       fprintf(stderr, "%2c %c %-2u  ", 
-      T->alphabet->string[T->rules[x][y].new_write] + 'A', 
+      T->alphabet->out_string[T->rules[x][y].new_write], 
       T->rules[x][y].move, T->rules[x][y].new_state);
       }
     fprintf(stderr, "\n");
@@ -201,9 +201,9 @@ void PrintTM(TM *T){
 // =============================================================================
 // - - - - - - - - - - - - - - - C R E A T E   T M - - - - - - - - - - - - - - -
 
-TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states, 
-             uint32_t maximum_time, uint32_t maximum_amplitude, 
-	 uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state){
+TM *CreateTM(uint8_t *alphabet, uint32_t alphabet_size, uint32_t 
+  number_of_states, uint32_t maximum_time, uint32_t maximum_amplitude, 
+  uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state){
   
   uint32_t x;
 
@@ -240,10 +240,25 @@ TM *CreateTM(uint32_t alphabet_size, uint32_t number_of_states,
 		              sizeof(uint8_t));
 
   T->alphabet = (ALPHABET *) Calloc(1, sizeof(ALPHABET));
+
+  T->alphabet->string     = (uint8_t *) Calloc(256, sizeof(uint8_t));
+  T->alphabet->out_string = (uint8_t *) Calloc(256, sizeof(uint8_t));
   
-  T->alphabet->string = (uint8_t *) Calloc(256, sizeof(uint8_t));
   for(x = 0 ; x < T->alphabet_size ; ++x)
     T->alphabet->string[x] = (uint8_t) x;
+  
+  if(!strcmp(alphabet, "-")){
+    for(x = 0 ; x < T->alphabet_size ; ++x)
+      T->alphabet->out_string[x] = (uint8_t) x + 'A';
+    }
+  else{
+    if(strlen(alphabet) < T->alphabet_size){
+      fprintf(stderr, "Error: alphabet is smaller than the alphabet size!\n");
+      exit(1);
+      }
+    for(x = 0 ; x < T->alphabet_size ; ++x)
+      T->alphabet->out_string[x] = (uint8_t) alphabet[x];
+    }
   
   return T;
   }
@@ -288,15 +303,15 @@ uint8_t UpdateTM(TM *T){
 // =============================================================================
 // - - - - - - - - - - - - - R A N D O M   F I L L   T M - - - - - - - - - - - -
 
-uint8_t RandFillTM(TM *T){
+uint8_t RandFillTM(TM *T, RAND *R){
 
   uint32_t x, y;
 
   for(x = 0 ; x < T->alphabet_size ; ++x)
     for(y = 0 ; y < T->number_of_states ; ++y){
-      T->rules[x][y].new_write = rand() % T->alphabet_size;
-      T->rules[x][y].move      = T->moves[rand() % MAXIMUM_MOVES];
-      T->rules[x][y].new_state = rand() % T->number_of_states;
+      T->rules[x][y].new_write = GetRandNumber(R) % T->alphabet_size;
+      T->rules[x][y].move      = T->moves[GetRandNumber(R) % MAXIMUM_MOVES];
+      T->rules[x][y].new_state = GetRandNumber(R) % T->number_of_states;
       }
 
   T->tape->guard            = DEFAULT_TAPE_GUARD;

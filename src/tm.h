@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "defs.h"
+#include "rand.h"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -34,6 +35,7 @@ RULE;
 
 typedef struct{
   uint8_t   *string;
+  uint8_t   *out_string;
   }
 ALPHABET;
 
@@ -65,10 +67,10 @@ void        PrintTape            (TM *);
 void        PrintTapeInWritter   (TM *, FILE *);
 void        PrintRulesInWritter  (TM *, FILE *);
 void        PrintTapePres        (TM *, double);
-TM          *CreateTM            (uint32_t, uint32_t, uint32_t, uint32_t,
-	                          uint32_t, uint8_t, uint32_t);
+TM          *CreateTM            (uint8_t *, uint32_t, uint32_t, uint32_t, 
+		                  uint32_t, uint32_t, uint8_t, uint32_t);
 void        LoadTMRules          (TM *, uint8_t *);
-uint8_t     RandFillTM           (TM *);
+uint8_t     RandFillTM           (TM *, RAND *);
 uint8_t     UpdateTM             (TM *);
 void        RemoveTM             (TM *);
 

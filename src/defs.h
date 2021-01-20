@@ -44,6 +44,7 @@ typedef struct{
   uint32_t  lcf_a;
   uint32_t  lcf_b;
   uint32_t  lcf_prime;
+  char      *alphabet;
   char      *output_top;
   char      *output_tape;
   char      *input_rules;

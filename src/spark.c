@@ -6,11 +6,13 @@
 #include <ctype.h>
 #include <time.h>
 #include <pthread.h>
+#include <openssl/rand.h>
 
 #include "defs.h"
 #include "mem.h"
 #include "msg.h"
 #include "args.h"
+#include "rand.h"
 #include "buffer.h"
 #include "context.h"
 #include "pmodels.h"
@@ -113,15 +115,17 @@ void ComplexityTMs(THREADS T){
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = fopen(out, "w");
 
-  TM *TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_time, 
-           P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+  RAND *R = CreateRand();
+
+  TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states, 
+  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
   fprintf(Writter, "NC\tSeed\tTime\tStates\tAlphabet\tInitState\tRules\tTape\n");
 
   for(machine = 0 ; machine < P->thread_machines ; ++machine){
     
     initial_state = TM->current_state;
-    RandFillTM(TM);
+    RandFillTM(TM, R);
     
     for(time = 0 ; time < P->max_time ; ++time){
       UpdateTM(TM);
@@ -135,7 +139,8 @@ void ComplexityTMs(THREADS T){
       if(complexity > P->threshold){      
     
         fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", complexity, 
-	P->seed, TM->maximum_time, TM->number_of_states, TM->alphabet_size, initial_state);
+	P->seed, TM->maximum_time, TM->number_of_states,
+       	TM->alphabet_size, initial_state);
 
         if(!P->hide_rules) 
 	  PrintRulesInWritter(TM, Writter);
@@ -145,6 +150,7 @@ void ComplexityTMs(THREADS T){
     }
 
   RemoveTM(TM);
+  RemoveRand(R);
   fclose(Writter);
   
   return;
@@ -172,10 +178,13 @@ void ComplexityTop(void){
     T[x].id = x;
 
   CheckInitialState();
-
-  srand(P->seed);
-  if(P->initial_state == RDST) P->initial_state = rand() % P->number_of_states;
-
+  
+  RAND *R = CreateRand();
+  if(P->initial_state == RDST) 
+    P->initial_state = GetRandNumber(R) % P->number_of_states;
+  
+  RemoveRand(R);
+  
   PrintInformation();
   
   for(x = 0 ; x < P->threads ; ++x)
@@ -204,18 +213,20 @@ void SchoolSimple(void){
 
   CheckInitialState();
 
-  srand(P->seed);
-  if(P->initial_state == RDST) P->initial_state = rand() % P->number_of_states;
+  RAND *R = CreateRand();
+
+  if(P->initial_state == RDST) 
+    P->initial_state = GetRandNumber(R) % P->number_of_states;
 
   PrintInformation();
 
-  TM *TM = CreateTM(P->alphabet_size, P->number_of_states, P->max_time,
-	   P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+  TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states, 
+  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
   if(strcmp(P->input_rules, "-"))
     LoadTMRules(TM, P->input_rules);
   else 
-    RandFillTM(TM);
+    RandFillTM(TM, R);
 
   PrintAlphabet (TM);
   PrintStates   (TM);
@@ -238,6 +249,7 @@ void SchoolSimple(void){
   if(strcmp(P->output_tape, "-")) PrintTapeFile(TM, P->output_tape);
 
   RemoveTM(TM);
+  RemoveRand(R);
 
   return;
   }
@@ -285,6 +297,8 @@ int32_t main(int argc, char *argv[]){
   P->ctx              = ArgNumber (2,     p, argc, "-co", "--context", 0, 32);
   P->threshold        = ArgDouble (0,     p, argc, "-th", "--threshold");
 
+  P->alphabet         = ArgString ("-",       p, argc, "-al", "--alphabet");
+  
   P->output_tape      = ArgString ("-",       p, argc, "-ot", "--output-tape");
   P->output_top       = ArgString ("top.txt", p, argc, "-ox", "--output-top");
   P->input_rules      = ArgString ("-",       p, argc, "-ir", "--input-rules");
