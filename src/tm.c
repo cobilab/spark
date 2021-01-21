@@ -230,7 +230,7 @@ TM *CreateTM(uint8_t *alphabet, uint32_t alphabet_size, uint32_t
 
   assert(T->maximum_time > T->tape->guard);
 
-  T->tape->time            = 0;
+  T->tape->time             = 0;
   T->tape->guard            = DEFAULT_TAPE_GUARD;
   T->tape->length           = T->maximum_time * 2 + 1;
   T->tape->current_position = T->maximum_time + 1;
@@ -243,21 +243,28 @@ TM *CreateTM(uint8_t *alphabet, uint32_t alphabet_size, uint32_t
 
   T->alphabet->string     = (uint8_t *) Calloc(256, sizeof(uint8_t));
   T->alphabet->out_string = (uint8_t *) Calloc(256, sizeof(uint8_t));
+  T->alphabet->rev_map    = (uint8_t *) Calloc(256, sizeof(uint8_t));
+  
+  T->alphabet->size = T->alphabet_size;
   
   for(x = 0 ; x < T->alphabet_size ; ++x)
     T->alphabet->string[x] = (uint8_t) x;
   
   if(!strcmp(alphabet, "-")){
-    for(x = 0 ; x < T->alphabet_size ; ++x)
+    for(x = 0 ; x < T->alphabet_size ; ++x){
       T->alphabet->out_string[x] = (uint8_t) x + 'A';
+      T->alphabet->rev_map[T->alphabet->out_string[x]] = x;
+      }
     }
   else{
     if(strlen(alphabet) < T->alphabet_size){
       fprintf(stderr, "Error: alphabet is smaller than the alphabet size!\n");
       exit(1);
       }
-    for(x = 0 ; x < T->alphabet_size ; ++x)
+    for(x = 0 ; x < T->alphabet_size ; ++x){
       T->alphabet->out_string[x] = (uint8_t) alphabet[x];
+      T->alphabet->rev_map[T->alphabet->out_string[x]] = x;
+      }
     }
   
   return T;
@@ -339,6 +346,10 @@ void RemoveTM(TM *T){
   Free(T->rules);
   Free(T->tape->string);
   Free(T->tape);
+  Free(T->alphabet->string);
+  Free(T->alphabet->out_string);
+  Free(T->alphabet->rev_map);
+  Free(T->alphabet);
   Free(T->moves);
   Free(T);
 

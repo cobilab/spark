@@ -36,6 +36,7 @@ CModel;
 void            GetPModelIdx         (U8 *, CModel *);
 uint64_t        GetPModelIdxCorr     (U8 *, CModel *, uint64_t);
 void            ResetCModelIdx       (CModel *);
+void            ResetCModel          (CModel *);
 void            UpdateCModelCounter  (CModel *, U32, U64);
 CModel          *CreateCModel        (U32, U32, U8, U32, U32, U32, double, double);
 void            ComputePModel        (CModel *, PModel *, uint64_t, uint32_t);

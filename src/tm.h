@@ -36,6 +36,8 @@ RULE;
 typedef struct{
   uint8_t   *string;
   uint8_t   *out_string;
+  uint8_t   *rev_map;
+  uint32_t  size;
   }
 ALPHABET;
 

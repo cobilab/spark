@@ -6,12 +6,12 @@
 #include <ctype.h>
 #include <time.h>
 #include <pthread.h>
-#include <openssl/rand.h>
 
 #include "defs.h"
 #include "mem.h"
 #include "msg.h"
 #include "args.h"
+#include "misc.h"
 #include "rand.h"
 #include "buffer.h"
 #include "context.h"
@@ -58,6 +58,94 @@ void PrintInformation(void){
   }
 
 ////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - C H E C K   A L P H A B E T   S Y M - - - - - - - - - - -
+
+void CheckInputAlphabet(ALPHABET *AL, uint8_t *input){
+
+  int x = 0, c, found = 0;
+  FILE *F = Fopen(input, "r");
+
+  while((c = fgetc(F)) != EOF){
+ 
+    found = 0;
+    for(x = 0 ; x < AL->size ; ++x)
+      if(c == AL->out_string[x]){
+	found = 1;
+	break;
+        }
+
+    if(found == 0){
+      fprintf(stderr, "Error: input char not in alphabet (ascii: %d)!\n", c);
+      exit(1);
+      }
+    }
+
+  fclose(F);
+
+  return;
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - - - - M E M O R I Z E   T A P E - - - - - - - - - - - -
+
+void MemorizeTape(TM *TM, CModel *CM){
+
+  uint32_t x;
+  uint8_t sym;
+  CBUF *symBuf = CreateCBuffer(BUFFER_SIZE, BGUARD);
+
+  for(x = TM->tape->minimum_position ; x < TM->tape->maximum_position ; ++x){
+    symBuf->buf[symBuf->idx] = sym = TM->alphabet->string[TM->tape->string[x]];
+    GetPModelIdx(&symBuf->buf[symBuf->idx-1], CM);
+    UpdateCModelCounter(CM, sym, CM->pModelIdx);
+    UpdateCBuffer(symBuf);
+    }
+
+  RemoveCBuffer(symBuf);
+
+  return;
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - R E L A T I V E   E V A L U A T I O N - - - - - - - - -
+
+double RelativeEvaluation(CModel *CM, uint8_t *input_name, ALPHABET *AL){
+
+  int      c;
+  uint8_t  sym;
+  uint32_t x, sequence_size = 0;
+  double   bits = 0;
+  CBUF     *symBuf = CreateCBuffer(BUFFER_SIZE, BGUARD);
+  PModel   *PM = CreatePModel(P->alphabet_size);
+
+  if(!strcmp(P->input_sequence, "-")){
+    fprintf(stderr, "Error: missing input sequence to compare!\n");
+    exit(1);
+    }
+
+  FILE *F = Fopen(P->input_sequence, "r");
+
+  ResetCModelIdx(CM);
+  while((c = fgetc(F)) != EOF){ 
+    symBuf->buf[symBuf->idx] = sym = AL->rev_map[c];
+    GetPModelIdx(&symBuf->buf[symBuf->idx-1], CM);
+    ComputePModel(CM, PM, CM->pModelIdx, CM->alphaDen);
+    bits += PModelSymbolNats(PM, sym) / M_LN2;
+    UpdateCBuffer(symBuf);
+    ++sequence_size;
+    }
+
+  RemovePModel(PM);
+  RemoveCBuffer(symBuf);
+  fclose(F);
+
+  double value = 1.0 - (bits / ((double) sequence_size * log2(AL->size)));
+
+  if(value < 0) return 0.0;
+  else          return value;
+  }
+
+////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - - I M P O S S I B L E - - - - - - - - - - - - - -
 
 void Impossible(void){
@@ -68,11 +156,93 @@ void Impossible(void){
   }
 
 ////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - - - - S E A R C H   T H R E A D S - - - - - - - - - - -
+
+void SearchTMs(THREADS T){
+
+  uint32_t x, time, machine, initial_state = 0;
+  char out[4096];
+  sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
+  FILE *Writter = Fopen(out, "w");
+
+  RAND *R = CreateRand();
+  if(P->initial_state == RDST)
+    P->initial_state = GetRandNumber(R) % P->number_of_states;
+
+  CModel *CM = CreateCModel(P->ctx, 1, 0, 0, 0, P->alphabet_size, 0.9, 0.9);
+  
+  TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states,
+  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+
+  CheckInputAlphabet(TM->alphabet, P->input_sequence);
+
+  fprintf(Writter, "NC\tSeed\tTime\tStates\tAlphabet\tInitState\tRules\tTape\n");
+  for(machine = 0 ; machine < P->thread_machines ; ++machine){
+
+    initial_state = TM->current_state;
+    RandFillTM(TM, R);
+
+    for(time = 0 ; time < P->max_time ; ++time){
+      UpdateTM(TM);
+      }
+
+    double amplitude = GetAmplitude(TM->tape);
+    if(TM->minimum_amplitude < amplitude && TM->maximum_amplitude > amplitude){
+
+      MemorizeTape(TM, CM);
+      double NRC = RelativeEvaluation(CM, P->input_sequence, TM->alphabet);
+      ResetCModel(CM);
+
+      if(NRC > P->threshold){
+
+        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", NRC,
+        P->seed, TM->maximum_time, TM->number_of_states,
+        TM->alphabet_size, initial_state);
+
+        if(!P->hide_rules)
+          PrintRulesInWritter(TM, Writter);
+        PrintTapeInWritter(TM, Writter);
+        }
+      }
+    }
+
+  RemoveCModel(CM);
+  RemoveTM(TM);
+  RemoveRand(R);
+  fclose(Writter);
+
+  return;
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - - - - - S   T H R E A D I N G - - - - - - - - - - - - -
+
+void *SearchThread(void *Thr){
+  THREADS *T = (THREADS *) Thr;
+  SearchTMs(T[0]);
+  pthread_exit(NULL);
+  }
+
+////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - - - - S E A R C H - - - - - - - - - - - - - - - -
 
 void Search(void){
 
-  THREADS *T;
+  uint32_t x;
+  pthread_t t[P->threads];
+  THREADS *T = (THREADS *) Calloc(P->threads, sizeof(THREADS));
+
+  for(x = 0 ; x < P->threads ; ++x)
+    T[x].id = x;
+
+  CheckInitialState();
+
+  PrintInformation();
+
+  for(x = 0 ; x < P->threads ; ++x)
+    pthread_create(&(t[x+1]), NULL, SearchThread, (void *) &(T[x]));
+  for(x = 0 ; x < P->threads ; ++x) // DO NOT JOIN FORS!
+    pthread_join(t[x+1], NULL);
 
   return;
   }
@@ -102,7 +272,7 @@ double GetTapeComplexity(TM *TM){
   RemovePModel(PM);
   RemoveCBuffer(symBuf);
 
-  return bits / (GetAmplitude(TM->tape) * log2(P->alphabet_size));
+  return bits / (GetAmplitude(TM->tape) * log2(P->alphabet_size)); // CHANGE TO FLOG_2?
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,9 +283,12 @@ void ComplexityTMs(THREADS T){
   uint32_t x, time, machine, initial_state = 0;
   char out[4096];
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
-  FILE *Writter = fopen(out, "w");
+  FILE *Writter = Fopen(out, "w");
 
   RAND *R = CreateRand();
+
+  if(P->initial_state == RDST)
+    P->initial_state = GetRandNumber(R) % P->number_of_states;
 
   TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states, 
   P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
@@ -179,12 +352,6 @@ void ComplexityTop(void){
 
   CheckInitialState();
   
-  RAND *R = CreateRand();
-  if(P->initial_state == RDST) 
-    P->initial_state = GetRandNumber(R) % P->number_of_states;
-  
-  RemoveRand(R);
-  
   PrintInformation();
   
   for(x = 0 ; x < P->threads ; ++x)
@@ -205,7 +372,7 @@ void SchoolAdvanced(void){
   }
 
 ////////////////////////////////////////////////////////////////////////////////
-// - - - - - - - - - - - - - - S C H O O L   S I M P L E - - - - - - - - - - - -
+// - - - - - - - - - - - - - S C H O O L   S I M P L E - - - - - - - - - - - - -
 
 void SchoolSimple(void){
 
@@ -302,6 +469,7 @@ int32_t main(int argc, char *argv[]){
   P->output_tape      = ArgString ("-",       p, argc, "-ot", "--output-tape");
   P->output_top       = ArgString ("top.txt", p, argc, "-ox", "--output-top");
   P->input_rules      = ArgString ("-",       p, argc, "-ir", "--input-rules");
+  P->input_sequence   = ArgString ("-",       p, argc, "-i",  "--input");
 
   fprintf(stderr, "\n");
 

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "defs.h"
 #include "mem.h"
 #include "array.h"
@@ -12,6 +13,15 @@ ARRAY *CreateArrayTable(uint64_t nSym, uint64_t length){
   A->length   = length;
   A->counters = (ACC *) Calloc(A->length * A->nSym, sizeof(ACC));
   return A;
+  }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void ResetArrayTable(ARRAY *A){
+
+  memset((void *) A->counters, 0, A->length * A->nSym * sizeof(ACC));
+
+  return;
   }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

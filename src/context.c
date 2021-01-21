@@ -9,6 +9,22 @@
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+void ResetCModel(CModel *M){
+
+  M->pModelIdx = 0;	
+  if(M->mode == HASH_TABLE_MODE){
+    RemoveHashTable(M->HT);
+    M->HT = CreateHashTable(M->nSym);
+    }
+  else{
+    ResetArrayTable(M->AT);
+    }
+
+  return;
+  }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 CModel *CreateCModel(U32 ctx, U32 aDen, U8 ref, U32 edits, U32 eDen, U32 nSym,
 double gamma, double eGamma){
   

@@ -48,6 +48,7 @@ typedef struct{
   char      *output_top;
   char      *output_tape;
   char      *input_rules;
+  char      *input_sequence;
   }
 PARAMETERS;
 
