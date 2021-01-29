@@ -16,7 +16,7 @@ void PrintActions(TM *T){
 
   uint32_t x;
 
-  fprintf(stderr, " Actions        : ");
+  fprintf(stderr, "Actions        : ");
   for(x = 0 ; x < MAXIMUM_MOVES ; ++x)
     if(x == MAXIMUM_MOVES-1) fprintf(stderr, " %c",  T->moves[x]);
     else                     fprintf(stderr, " %c,", T->moves[x]);
@@ -32,7 +32,7 @@ void PrintAlphabet(TM *T){
 
   uint32_t x;
 
-  fprintf(stderr, " Alphabet       : ");
+  fprintf(stderr, "Alphabet       : ");
   for(x = 0 ; x < T->alphabet_size ; ++x)
     if(x == T->alphabet_size-1) 
       fprintf(stderr, " %c",  T->alphabet->out_string[x]);
@@ -50,7 +50,7 @@ void PrintStates(TM *T){
 
   uint32_t x;
 
-  fprintf(stderr, " States         : ");
+  fprintf(stderr, "States         : ");
   for(x = 0 ; x < T->number_of_states ; ++x)
     if(x == T->number_of_states-1) fprintf(stderr, " %u",  x);
     else                           fprintf(stderr, " %u,", x);
@@ -164,7 +164,7 @@ void PrintTapePres(TM *T, double delay){
 
   usleep(delay);
 
-  fprintf(stderr, " Time [%u] | Tape: ", T->tape->time);
+  fprintf(stderr, "Time [%u] | Tape: ", T->tape->time);
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
     fprintf(stderr, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(stderr, "\r");
@@ -186,7 +186,7 @@ void PrintTM(TM *T){
   fprintf(stderr, "\n");
 
   for(x = 0 ; x < T->alphabet_size ; ++x){
-    fprintf(stderr, "%2c\t", T->alphabet->out_string[x]);
+    fprintf(stderr, "%-2c\t", T->alphabet->out_string[x]);
     for(y = 0 ; y < T->number_of_states ; ++y){
       fprintf(stderr, "%2c %c %-2u  ", 
       T->alphabet->out_string[T->rules[x][y].new_write], 
