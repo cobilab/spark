@@ -164,7 +164,7 @@ void PrintTapePres(TM *T, double delay){
 
   usleep(delay);
 
-  fprintf(stderr, "Time [%u] | Tape: ", T->tape->time);
+  fprintf(stderr, "Time [%lu] | Tape: ", T->tape->time);
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
     fprintf(stderr, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(stderr, "\r");

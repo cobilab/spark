@@ -33,7 +33,7 @@ uint32_t GetRandNumber(RAND *R){
     exit(1);
     }	  
 
-  fread(&R->number, sizeof(R->number), 1, R->source);
+  size_t bytes_read = fread(&R->number, sizeof(R->number), 1, R->source);
   R->idx++;
 
   return R->number;
