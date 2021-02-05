@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.4)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lpthread -lm -O3 -march=native -mtune=native ")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lpthread -lm -O3 ")
 IF(UNIX)
  link_libraries(m)
 ENDIF(UNIX)

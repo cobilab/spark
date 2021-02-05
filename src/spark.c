@@ -53,6 +53,7 @@ void CheckInitialState(void){
 
 void PrintInformation(void){
 
+  fprintf(stderr, "Mode           :  %u\n", P->mode);
   switch(P->mode){
     case 1: 
     fprintf(stderr, "Using seed     :  %u\n", P->seed);
@@ -207,10 +208,9 @@ void LoadFastMem(FAST_MEM *FM, CModel *CM, ALPHABET *AL){
 
 double XRelativeEvaluation(FAST_MEM *FM, CModel *CM, ALPHABET *AL){
 
-  uint32_t idx;
+  uint32_t idx = 0;
   double   bits = 0;
 
-  //ResetCModelIdx(CM);
   while(idx < FM->length){
     ComputePModel(CM, FM->pmodel, FM->idx[idx], CM->alphaDen);
     bits += PModelSymbolNats(FM->pmodel, FM->sym[idx]) / M_LN2;
@@ -227,7 +227,7 @@ double RelativeEvaluation(CModel *CM, uint8_t *input_name, ALPHABET *AL){
 
   int      c;
   uint8_t  sym;
-  uint32_t x, sequence_size = 0;
+  uint32_t sequence_size = 0;
   double   bits = 0;
   CBUF     *symBuf = CreateCBuffer(BUFFER_SIZE, BGUARD);
   PModel   *PM = CreatePModel(P->alphabet_size);
@@ -271,7 +271,7 @@ void Impossible(void){
 
 void XSearchTMs(THREADS T){
 
-  double amplitude, nrc;
+  double amplitude;
   uint32_t x, time, machine, initial_state = 0;
   char out[4096];
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
@@ -307,10 +307,12 @@ void XSearchTMs(THREADS T){
     if(TM->minimum_amplitude < amplitude && TM->maximum_amplitude > amplitude){
 
       MemorizeTape(TM, CM);
-      nrc = XRelativeEvaluation(FM, CM, TM->alphabet);
+      double nrc = XRelativeEvaluation(FM, CM, TM->alphabet);
       ResetCModel(CM);
 
       if(nrc < P->threshold){
+
+	if(P->verbose) fprintf(stderr, "Found TM NRC   :  %3lf\n", nrc);
 
         fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", nrc,
         P->seed, TM->maximum_time, TM->number_of_states,
@@ -336,7 +338,7 @@ void XSearchTMs(THREADS T){
 
 void SearchTMs(THREADS T){
 
-  double amplitude, nrc;
+  double amplitude;
   uint32_t x, time, machine, initial_state = 0;
   char out[4096];
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
@@ -367,10 +369,12 @@ void SearchTMs(THREADS T){
     if(TM->minimum_amplitude < amplitude && TM->maximum_amplitude > amplitude){
 
       MemorizeTape(TM, CM);
-      nrc = RelativeEvaluation(CM, P->input_sequence, TM->alphabet);
+      double nrc = RelativeEvaluation(CM, P->input_sequence, TM->alphabet);
       ResetCModel(CM);
 
       if(nrc < P->threshold){
+	
+	if(P->verbose) fprintf(stderr, "Found TM NRC   :  %3lf\n", nrc);
 
         fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", nrc,
         P->seed, TM->maximum_time, TM->number_of_states,
