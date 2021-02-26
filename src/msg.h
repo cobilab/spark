@@ -4,6 +4,7 @@
 #include "defs.h"
 
 void   PrintMenu          (void);
+void   PrintAbout         (void);
 void   PrintVersion       (void);
 
 #endif

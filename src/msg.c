@@ -24,6 +24,7 @@ void PrintMenu(void){
   "ARGUMENTS                                                            \n"
   "     -h,        --help,                 give this help,              \n"
   "     -a,        --about,                display extra info,          \n"
+  "     -x,        --version,              display version number,      \n"
   "     -v,        --verbose,              verbose mode (more info),    \n"
   "     -f,        --force,                force output overwrite,      \n"
   "     -t,        --threads,              number of threads (df:%u),   \n"
@@ -32,6 +33,8 @@ void PrintMenu(void){
   "     -ht,       --hide-tape,            hide tape output,            \n"
   "     -sa,       --show-all-tape,        show all tape iterations,    \n"
   "     -hr,       --hide-rules,           hide rules in top file,      \n"
+  "                                                                     \n"
+  "     -rt,       --random-tape,          random tape (input size),    \n"
   "                                                                     \n"
   "     -is <INT>, --initial-state <INT>,  initial state to start,      \n"
   "     -as <INT>, --alphabet-size <INT>,  alphabet cardinality,        \n"
@@ -73,7 +76,7 @@ void PrintMenu(void){
   VERSION, RELEASE, DEFT);
   }
 
-void PrintVersion(void){
+void PrintAbout(void){
   fprintf(stderr,
   "                                                                       \n"
   "                          ===================                          \n"
@@ -91,6 +94,11 @@ void PrintVersion(void){
   "You may redistribute copies of it under the terms of the GNU - General \n"
   "Public License v3 <http://www.gnu.org/licenses/gpl.html>. There is NOT \n"
   "ANY WARRANTY, to the extent permitted by law.\n\n", VERSION, RELEASE);
+  }
+
+void PrintVersion(void){
+  fprintf(stderr, "%u.%u\n", VERSION, RELEASE);
+  return;
   }
 
 

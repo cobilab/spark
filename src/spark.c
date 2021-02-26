@@ -664,6 +664,11 @@ int32_t main(int argc, char *argv[]){
     }
 
   if(ArgState(DEF_VERSION, p, argc, "-a", "--about")){
+    PrintAbout();
+    return EXIT_SUCCESS;
+    }
+
+  if(ArgState(DEF_VERSION, p, argc, "-x", "--version")){
     PrintVersion();
     return EXIT_SUCCESS;
     }
@@ -674,6 +679,7 @@ int32_t main(int argc, char *argv[]){
   P->hide_tape        = ArgState (0,           p, argc, "-ht", "--hide-tape");
   P->complexity       = ArgState (0,           p, argc, "-sc", "--skip-complexity");
   P->hide_rules       = ArgState (0,           p, argc, "-hr", "--hide-rules");
+  P->random_tape      = ArgState (0,           p, argc, "-rt", "--random-tape");
  
   P->threads          = ArgNumber (DEFT,  p, argc, "-t",  "--threads", 0, 5000);
   P->initial_state    = ArgNumber (RDST,  p, argc, "-is", "--initial-state", 0, 255);
@@ -681,6 +687,7 @@ int32_t main(int argc, char *argv[]){
   P->number_of_states = ArgNumber (7,     p, argc, "-sn", "--states-number", 1, 99);
   P->max_time         = ArgNumber (10000, p, argc, "-ms", "--max-time", 1, 2999999999);
   P->thread_machines  = ArgNumber (10000, p, argc, "-tm", "--machines", 1, 2999999999);
+
   P->min_amplitude    = ArgNumber (50,    p, argc, "-ia", "--min-amplitude", 1, 2999999999);
   P->max_amplitude    = ArgNumber (20000, p, argc, "-ma", "--max-amplitude", 1, 2999999999);
   P->mode             = ArgNumber (1,     p, argc, "-md", "--mode",  1, 6);

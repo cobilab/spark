@@ -37,6 +37,7 @@ typedef struct{
   uint32_t  min_amplitude;
   uint8_t   mode;
   uint8_t   complexity;
+  uint8_t   random_tape;
   uint32_t  seed;
   uint32_t  delay;
   uint32_t  ctx;
