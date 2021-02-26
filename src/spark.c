@@ -35,6 +35,14 @@ double CalculateBits(void){
  }
 
 ////////////////////////////////////////////////////////////////////////////////
+// - - - - - - - - - - - - - C A L C U L A T E   B I T S - - - - - - - - - - - -
+
+double CalculateInputBits(void){
+
+ return ((double) log2(P->alphabet_size) * NBytesInFile(P->input_sequence));
+ }
+
+////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - C H E C K   I N I T I A L   S T A T E - - - - - - - - - -
 
 void CheckInitialState(void){
@@ -90,6 +98,7 @@ void PrintInformation(void){
     fprintf(stderr, "Min amplitude  :  %u\n", P->min_amplitude);
     fprintf(stderr, "NRC Threshold  :  %.3lf\n", P->threshold);
     fprintf(stderr, "Bits in rules  :  %.3lf\n", CalculateBits());
+    fprintf(stderr, "Bits in input  :  %.3lf\n", CalculateInputBits());
     break;
 
     case 5:
@@ -101,6 +110,7 @@ void PrintInformation(void){
     fprintf(stderr, "Min amplitude  :  %u\n", P->min_amplitude);
     fprintf(stderr, "Threshold      :  %.3lf\n", P->threshold);
     fprintf(stderr, "Bits in rules  :  %.3lf\n", CalculateBits());
+    fprintf(stderr, "Bits in input  :  %.3lf\n", CalculateInputBits());
     break;
 
     case 6:
