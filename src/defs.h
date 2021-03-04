@@ -23,6 +23,7 @@ typedef struct{
   U8        force;
   U8        show_tape;
   U8        hide_tape;
+  U8        hide_color;
   U8        show_action;
   U8        hide_rules;
   int32_t   initial_state;

@@ -679,6 +679,7 @@ int32_t main(int argc, char *argv[]){
   P->hide_tape        = ArgState (0,           p, argc, "-ht", "--hide-tape");
   P->complexity       = ArgState (0,           p, argc, "-sc", "--skip-complexity");
   P->hide_rules       = ArgState (0,           p, argc, "-hr", "--hide-rules");
+  P->hide_color       = ArgState (0,           p, argc, "-hc", "--hide-color");
   P->random_tape      = ArgState (0,           p, argc, "-rt", "--random-tape");
  
   P->threads          = ArgNumber (DEFT,  p, argc, "-t",  "--threads", 0, 5000);

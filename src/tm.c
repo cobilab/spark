@@ -190,11 +190,12 @@ void PrintTM(TM *T){
   fprintf(stderr, "\n");
 
   for(x = 0 ; x < T->alphabet_size ; ++x){
-    fprintf(stderr, "%s%-2c%s\t", colors[x % MAX_COLOR], 
+    fprintf(stderr, " %s%c%s\t", colors[x % MAX_COLOR], 
     T->alphabet->out_string[x], normal_color);
     for(y = 0 ; y < T->number_of_states ; ++y){
-      fprintf(stderr, "%2c %c %-2u  ", 
-      T->alphabet->out_string[T->rules[x][y].new_write], 
+      fprintf(stderr, " %s%c%s %c %-2u  ", 
+      colors[T->rules[x][y].new_write % MAX_COLOR],
+      T->alphabet->out_string[T->rules[x][y].new_write], normal_color,
       T->rules[x][y].move, T->rules[x][y].new_state);
       }
     fprintf(stderr, "\n");
