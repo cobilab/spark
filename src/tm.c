@@ -1,5 +1,6 @@
 #include <string.h>
 #include "tm.h"
+#include "colors.h"
 #include "mem.h"
 
 // =============================================================================
@@ -35,9 +36,11 @@ void PrintAlphabet(TM *T){
   fprintf(stderr, "Alphabet       : ");
   for(x = 0 ; x < T->alphabet_size ; ++x)
     if(x == T->alphabet_size-1) 
-      fprintf(stderr, " %c",  T->alphabet->out_string[x]);
+      fprintf(stderr, " %s%c%s", colors[x % MAX_COLOR],
+      T->alphabet->out_string[x], normal_color);
     else 
-      fprintf(stderr, " %c,", T->alphabet->out_string[x]);
+      fprintf(stderr, " %s%c%s,", colors[x % MAX_COLOR], 
+      T->alphabet->out_string[x], normal_color);
   fprintf(stderr, "\n");
 
   return;
@@ -166,7 +169,8 @@ void PrintTapePres(TM *T, double delay){
 
   fprintf(stderr, "Time [%lu] | Tape: ", T->tape->time);
   for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
-    fprintf(stderr, "%c", T->alphabet->out_string[T->tape->string[x]]);
+    fprintf(stderr, "%s%c%s", colors[T->tape->string[x] % MAX_COLOR], 
+    T->alphabet->out_string[T->tape->string[x]], normal_color);
   fprintf(stderr, "\r");
 
   return;
@@ -186,7 +190,8 @@ void PrintTM(TM *T){
   fprintf(stderr, "\n");
 
   for(x = 0 ; x < T->alphabet_size ; ++x){
-    fprintf(stderr, "%-2c\t", T->alphabet->out_string[x]);
+    fprintf(stderr, "%s%-2c%s\t", colors[x % MAX_COLOR], 
+    T->alphabet->out_string[x], normal_color);
     for(y = 0 ; y < T->number_of_states ; ++y){
       fprintf(stderr, "%2c %c %-2u  ", 
       T->alphabet->out_string[T->rules[x][y].new_write], 
