@@ -73,6 +73,7 @@ THREADS;
 #define DEF_FORCE              0
 #define RDST                   255
 #define DEFT                   4
+#define NMAX                   2999999999
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
