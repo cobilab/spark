@@ -116,7 +116,7 @@ COPYRIGHT
 On using this software/method please cite:
 
 <pre>
-SPARK: a C program for simulating and searching for exact or
+SPARK: a C program for simulating and searching exact or
 approximate Turing machines (TM) with specific characteristics. 
 D. Pratas. https://github.com/cobilab/spark.
 </pre>
