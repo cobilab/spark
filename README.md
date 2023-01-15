@@ -30,10 +30,7 @@ make
 
 ## EXECUTION
 
-### Run SPARK
-
 Run SPARK
-
 <pre>
 ./SPARK 
 </pre>
