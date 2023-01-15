@@ -47,7 +47,7 @@ or
 ./SPARK -h
 </pre>
 this will output the following
-<pre>
+```
                                                                      
      ███████  ███████  ███████  ███████  ██   ███                    
      ██       ██   ██  ██   ██  ██   ██  ██  ███                     
@@ -116,8 +116,7 @@ EXAMPLES
 COPYRIGHT                                                            
      Copyright 2017-2023, D. Pratas, IEETA, University of Aveiro.    
      License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>. 
-
-</pre>
+```
 
 ## CITATION ##
 
