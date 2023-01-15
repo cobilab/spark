@@ -2,6 +2,8 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 [![AFM](https://img.shields.io/static/v1.svg?label=Method&message=alignment-free&color=yellow)](#)
+[![EXT](https://img.shields.io/static/v1.svg?label=Extra&message=color-ascii&color=orange)](#)
+[![MOD](https://img.shields.io/static/v1.svg?label=Mode&message=multi&color=blue)](#)
 
 </div>
 
