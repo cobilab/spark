@@ -27,7 +27,7 @@ void PrintMenu(void){
   "     -x,        --version,              display version number,      \n"
   "     -v,        --verbose,              verbose mode (more info),    \n"
   "     -f,        --force,                force output overwrite,      \n"
-  "     -t,        --threads,              number of threads (df:%u),   \n"
+  "     -t <INT>,  --threads <INT>,        number of threads (df:%u),   \n"
   "                                                                     \n"
   "     -sc,       --skip-complexity,      skip complexity process,     \n"
   "     -ht,       --hide-tape,            hide tape output,            \n"
