@@ -35,7 +35,7 @@ double CalculateBits(void){
  }
 
 ////////////////////////////////////////////////////////////////////////////////
-// - - - - - - - - - - - - - C A L C U L A T E   B I T S - - - - - - - - - - - -
+// - - - - - - - - - C A L C U L A T E   I N P U T   B I T S - - - - - - - - - -
 
 double CalculateInputBits(void){
 
@@ -686,15 +686,15 @@ int32_t main(int argc, char *argv[]){
   P->initial_state    = ArgNumber (RDST,  p, argc, "-is", "--initial-state", 0, 255);
   P->alphabet_size    = ArgNumber (4,     p, argc, "-as", "--alphabet-size", 2, 254);
   P->number_of_states = ArgNumber (7,     p, argc, "-sn", "--states-number", 1, 99);
-  P->max_time         = ArgNumber (10000, p, argc, "-ms", "--max-time", 1, 2999999999);
-  P->thread_machines  = ArgNumber (10000, p, argc, "-tm", "--machines", 1, 2999999999);
+  P->max_time         = ArgNumber (10000, p, argc, "-ms", "--max-time", 1, NMAX);
+  P->thread_machines  = ArgNumber (10000, p, argc, "-tm", "--machines", 1, NMAX);
 
-  P->min_amplitude    = ArgNumber (50,    p, argc, "-ia", "--min-amplitude", 1, 2999999999);
-  P->max_amplitude    = ArgNumber (20000, p, argc, "-ma", "--max-amplitude", 1, 2999999999);
+  P->min_amplitude    = ArgNumber (50,    p, argc, "-ia", "--min-amplitude", 1, NMAX);
+  P->max_amplitude    = ArgNumber (20000, p, argc, "-ma", "--max-amplitude", 1, NMAX);
   P->mode             = ArgNumber (1,     p, argc, "-md", "--mode",  1, 6);
   P->top              = ArgNumber (5,     p, argc, "-tp", "--top",   0, 100000);
-  P->seed             = ArgNumber (0,     p, argc, "-rs", "--seed",  0, 2999999999);
-  P->delay            = ArgNumber (50000, p, argc, "-dl", "--delay", 0, 2999999999);
+  P->seed             = ArgNumber (0,     p, argc, "-rs", "--seed",  0, NMAX);
+  P->delay            = ArgNumber (50000, p, argc, "-dl", "--delay", 0, NMAX);
   P->ctx              = ArgNumber (2,     p, argc, "-co", "--context", 0, 32);
   P->threshold        = ArgDouble (0,     p, argc, "-th", "--threshold");
 
