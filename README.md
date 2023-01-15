@@ -5,7 +5,7 @@
 
 </div>
 
-<p align="center"><img src="imgs/logo_trans.png" alt="SPARK" width="250" border="0" /></p>
+<p align="center"><img src="imgs/logo.png" alt="SPARK" width="250" border="0" /></p>
 <p align="center">
 <b>SPARK: simulation and search for exact or approximate Turing Machines</b>. 
 </p>
@@ -124,9 +124,9 @@ COPYRIGHT
 On using this software/method please cite:
 
 <pre>
-D. Pratas. SPARK: a C program for simulating and searching for exact or
+SPARK: a C program for simulating and searching for exact or
 approximate Turing machines (TM) with specific characteristics. 
-https://github.com/cobilab/spark.
+D. Pratas. https://github.com/cobilab/spark.
 </pre>
 
 ## ISSUES ##
