@@ -53,6 +53,7 @@ typedef struct{
   uint32_t  minimum_amplitude;
   uint32_t  current_state;
   uint32_t  initial_state;
+  uint32_t  rand_type;
   uint8_t   mode;
   }
 TM;

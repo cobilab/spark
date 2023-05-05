@@ -46,6 +46,7 @@ void PrintMenu(void){
   "     -al <STR>, --alphabet <STR>,       alphabet to use (String),    \n"
   "                                                                     \n"
   "     -rs <INT>, --seed <INT>,           seed in random generation,   \n"
+  "     -rt <INT>, --rand-type <INT>,      random type: 0=sys,1=rand,   \n"
   "     -dl <INT>, --delay <INT>,          visualization delay (ms),    \n"
   "     -tp <INT>, --top <INT>,            high complexity top tapes,   \n"
   "     -co <INT>, --ctx <INT>,            complexity context order,    \n"

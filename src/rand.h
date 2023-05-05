@@ -8,6 +8,7 @@
 #define RAND_DEV "/dev/urandom"
 
 typedef struct{
+  uint8_t   type;
   uint8_t   open;
   uint32_t  number;
   uint32_t  idx;
@@ -17,7 +18,7 @@ RAND;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-RAND        *CreateRand    (void);
+RAND        *CreateRand    (uint8_t);
 uint32_t    GetRandNumber  (RAND *);
 void        RemoveRand     (RAND *);
 

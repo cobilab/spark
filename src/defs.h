@@ -26,6 +26,7 @@ typedef struct{
   U8        hide_color;
   U8        show_action;
   U8        hide_rules;
+  U8        rand_type;
   int32_t   initial_state;
   uint32_t  top;
   uint32_t  threads;

@@ -287,7 +287,7 @@ void XSearchTMs(THREADS T){
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = Fopen(out, "w");
 
-  RAND *R = CreateRand();
+  RAND *R = CreateRand(P->rand_type);
   if(P->initial_state == RDST)
     P->initial_state = GetRandNumber(R) % P->number_of_states;
 
@@ -354,7 +354,7 @@ void SearchTMs(THREADS T){
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = Fopen(out, "w");
 
-  RAND *R = CreateRand();
+  RAND *R = CreateRand(P->rand_type);
   if(P->initial_state == RDST)
     P->initial_state = GetRandNumber(R) % P->number_of_states;
 
@@ -510,7 +510,7 @@ void ComplexityTMs(THREADS T){
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = Fopen(out, "w");
 
-  RAND *R = CreateRand();
+  RAND *R = CreateRand(P->rand_type);
 
   if(P->initial_state == RDST)
     P->initial_state = GetRandNumber(R) % P->number_of_states;
@@ -606,7 +606,7 @@ void SchoolSimple(void){
 
   CheckInitialState();
 
-  RAND *R = CreateRand();
+  RAND *R = CreateRand(P->rand_type);
 
   if(P->initial_state == RDST) 
     P->initial_state = GetRandNumber(R) % P->number_of_states;
@@ -696,6 +696,7 @@ int32_t main(int argc, char *argv[]){
   P->seed             = ArgNumber (0,     p, argc, "-rs", "--seed",  0, NMAX);
   P->delay            = ArgNumber (50000, p, argc, "-dl", "--delay", 0, NMAX);
   P->ctx              = ArgNumber (2,     p, argc, "-co", "--context", 0, 32);
+  P->rand_type        = ArgNumber (0,     p, argc, "-rt", "--rand-type", 0, 1);
   P->threshold        = ArgDouble (0,     p, argc, "-th", "--threshold");
 
   P->alphabet         = ArgString ("-",       p, argc, "-al", "--alphabet");
@@ -707,7 +708,9 @@ int32_t main(int argc, char *argv[]){
 
   fprintf(stderr, "\n");
 
-  if(!P->seed) P->seed = (uint32_t) time(NULL);
+  if(!P->seed) 
+    P->seed = (uint32_t) time(NULL);
+  srand(P->seed);
 
   switch(P->mode){
     case 1: SchoolSimple   ();  break;
