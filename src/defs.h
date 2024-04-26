@@ -48,6 +48,7 @@ typedef struct{
   uint32_t  lcf_b;
   uint32_t  lcf_prime;
   char      *alphabet;
+  char      halt;
   char      *output_top;
   char      *output_tape;
   char      *input_rules;
@@ -72,6 +73,7 @@ THREADS;
 #define DEF_HELP               0
 #define DEF_VERBOSE            0
 #define DEF_FORCE              0
+#define DEF_HALT               0
 #define RDST                   255
 #define DEFT                   4
 #define NMAX                   2999999999

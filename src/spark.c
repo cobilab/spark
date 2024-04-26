@@ -91,7 +91,7 @@ void PrintInformation(void){
 
     case 4:
     fprintf(stderr, "Threads (T)    :  %u\n", P->threads);
-    fprintf(stderr, "Machines by T  :  %u\n", P->thread_machines);
+    fprintf(stderr, "Machines by T  :  %"PRIu64"\n", P->thread_machines);
     fprintf(stderr, "Context (FCM)  :  %u\n", P->ctx);
     fprintf(stderr, "Max time       :  %u\n", P->max_time);
     fprintf(stderr, "Max amplitude  :  %u\n", P->max_amplitude);
@@ -282,7 +282,7 @@ void Impossible(void){
 void XSearchTMs(THREADS T){
 
   double amplitude;
-  uint32_t x, time, machine, initial_state = 0;
+  uint64_t x, time, machine, initial_state = 0;
   char out[4096];
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = Fopen(out, "w");
@@ -293,7 +293,7 @@ void XSearchTMs(THREADS T){
 
   CModel *CM = CreateCModel(P->ctx, 1, 0, 0, 0, P->alphabet_size, 0.9, 0.9);
 
-  TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states,
+  TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states,
   P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
   CheckInputAlphabet(TM->alphabet, P->input_sequence);
@@ -322,7 +322,7 @@ void XSearchTMs(THREADS T){
 
       if(nrc < P->threshold){
 
-	if(P->verbose) fprintf(stderr, "Found TM NRC   :  %3lf\n", nrc);
+	if(P->verbose) fprintf(stdout, "Found TM NRC   :  %3lf\n", nrc);
 
         fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", nrc,
         P->seed, TM->maximum_time, TM->number_of_states,
@@ -349,7 +349,7 @@ void XSearchTMs(THREADS T){
 void SearchTMs(THREADS T){
 
   double amplitude;
-  uint32_t x, time, machine, initial_state = 0;
+  uint64_t x, time, machine, initial_state = 0;
   char out[4096];
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = Fopen(out, "w");
@@ -360,7 +360,7 @@ void SearchTMs(THREADS T){
 
   CModel *CM = CreateCModel(P->ctx, 1, 0, 0, 0, P->alphabet_size, 0.9, 0.9);
   
-  TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states,
+  TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states,
   P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
   CheckInputAlphabet(TM->alphabet, P->input_sequence);
@@ -505,7 +505,7 @@ double GetTapeComplexity(TM *TM){
 void ComplexityTMs(THREADS T){
 
   double complexity;
-  uint32_t x, time, machine, initial_state = 0, amplitude;
+  uint64_t x, time, machine, initial_state = 0, amplitude;
   char out[4096];
   sprintf(out, "%s-%u.inf", P->output_top, T.id+1);
   FILE *Writter = Fopen(out, "w");
@@ -515,7 +515,7 @@ void ComplexityTMs(THREADS T){
   if(P->initial_state == RDST)
     P->initial_state = GetRandNumber(R) % P->number_of_states;
 
-  TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states, 
+  TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states, 
   P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
   fprintf(Writter, "NC\tSeed\tsize\tTime\tStates\tAlphabet"
@@ -613,7 +613,7 @@ void SchoolSimple(void){
 
   PrintInformation();
 
-  TM *TM = CreateTM(P->alphabet, P->alphabet_size, P->number_of_states, 
+  TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states, 
   P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
 
   if(strcmp(P->input_rules, "-"))
@@ -675,6 +675,7 @@ int32_t main(int argc, char *argv[]){
 
   P->verbose          = ArgState (DEF_VERBOSE, p, argc, "-v",  "--verbose");
   P->force            = ArgState (DEF_FORCE,   p, argc, "-f",  "--force");
+  P->halt             = ArgState (DEF_HALT,    p, argc, "-ha", "--halt");
   P->show_tape        = ArgState (0,           p, argc, "-sa", "--show-all-tape");
   P->hide_tape        = ArgState (0,           p, argc, "-ht", "--hide-tape");
   P->complexity       = ArgState (0,           p, argc, "-sc", "--skip-complexity");
@@ -706,8 +707,6 @@ int32_t main(int argc, char *argv[]){
   P->input_rules      = ArgString ("-",       p, argc, "-ir", "--input-rules");
   P->input_sequence   = ArgString ("-",       p, argc, "-i",  "--input");
 
-  fprintf(stderr, "\n");
-
   if(!P->seed) 
     P->seed = (uint32_t) time(NULL);
   srand(P->seed);
@@ -722,10 +721,8 @@ int32_t main(int argc, char *argv[]){
     default: fprintf(stderr, "Error: unknown mode!\n"); exit(1); break;
     }
 
-  fprintf(stderr, "\n");
-
   stop = clock();
-  fprintf(stdout, " Spent %g sec.\n\n", ((double)(stop-start))/CLOCKS_PER_SEC);
+  fprintf(stderr, "Spent %g sec.\n", ((double)(stop-start))/CLOCKS_PER_SEC);
 
   return EXIT_SUCCESS;
   }

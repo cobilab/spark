@@ -30,6 +30,7 @@ void PrintMenu(void){
   "     -t <INT>,  --threads <INT>,        number of threads (df:%u),   \n"
   "                                                                     \n"
   "     -sc,       --skip-complexity,      skip complexity process,     \n"
+  "     -ha,       --halt,                 consider the machine halts,  \n"
   "     -ht,       --hide-tape,            hide tape output,            \n"
   "     -sa,       --show-all-tape,        show all tape iterations,    \n"
   "     -hr,       --hide-rules,           hide rules in top file,      \n"
@@ -42,6 +43,7 @@ void PrintMenu(void){
   "     -ms <INT>, --max-time <INT>,       maximum time before halt,    \n"
   "     -ma <INT>, --max-amplitude <INT>,  maximum tape amplitude,      \n"
   "     -ia <INT>, --min-amplitude <INT>,  minimum tape amplitude,      \n"
+  "     -tm <INT>, --machines <INT>,       machines number by thread,   \n"
   "                                                                     \n"
   "     -al <STR>, --alphabet <STR>,       alphabet to use (String),    \n"
   "                                                                     \n"
@@ -71,7 +73,7 @@ void PrintMenu(void){
   "     ./SPARK --top 50 --mode 3 --states-number 9 --input seq.txt     \n"
   "                                                                     \n"
   "COPYRIGHT                                                            \n"
-  "     Copyright 2017-2023, D. Pratas, IEETA, University of Aveiro.    \n"
+  "     Copyright 2017-2024, D. Pratas, IEETA, University of Aveiro.    \n"
   "     License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>.    \n"
   "                                                                     \n",
   VERSION, RELEASE, DEFT);
@@ -87,7 +89,7 @@ void PrintAbout(void){
   "                  A tool for simulation or search for                  \n"
   "                  exact / approximate Turing machines                  \n"
   "                                                                       \n"
-  "                    Copyright 2017-2023, D. Pratas,                    \n"
+  "                    Copyright 2017-2024, D. Pratas,                    \n"
   "                   IEETA/DETI, University of Aveiro.                   \n"
   "                                                                       \n"
   "                 This is a Free software, under GPLv3.                 \n"

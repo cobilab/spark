@@ -207,7 +207,7 @@ void PrintTM(TM *T){
 // =============================================================================
 // - - - - - - - - - - - - - - - C R E A T E   T M - - - - - - - - - - - - - - -
 
-TM *CreateTM(uint8_t *alphabet, uint32_t alphabet_size, uint32_t 
+TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t 
   number_of_states, uint32_t maximum_time, uint32_t maximum_amplitude, 
   uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state){
   
@@ -215,6 +215,7 @@ TM *CreateTM(uint8_t *alphabet, uint32_t alphabet_size, uint32_t
 
   TM *T = (TM *) Calloc(1, sizeof(TM));
 
+  T->halt              = halt;
   T->alphabet_size     = alphabet_size;
   T->number_of_states  = number_of_states;
   T->maximum_time      = maximum_time;
@@ -296,7 +297,8 @@ uint8_t UpdateTM(TM *T){
     case '<': T->tape->current_position--; break;
     case '>': T->tape->current_position++; break;
     case '=': break;
-    default: fprintf(stderr, "Error: TM moves restricted to {<, >, =}\n"); 
+    case '.': fprintf(stdout, "\nThis machine has halted (.)\n"); exit(0);
+    default: fprintf(stderr, "Error: TM moves restricted to {<, >, =, .}\n"); 
     exit(1);
     }
 
@@ -326,6 +328,12 @@ uint8_t RandFillTM(TM *T, RAND *R){
       T->rules[x][y].move      = T->moves[GetRandNumber(R) % MAXIMUM_MOVES];
       T->rules[x][y].new_state = GetRandNumber(R) % T->number_of_states;
       }
+
+  if(T->halt){
+    T->rules[GetRandNumber(R) % T->alphabet_size]
+	    [GetRandNumber(R) % T->number_of_states].move = '.';
+    
+    }
 
   T->tape->guard            = DEFAULT_TAPE_GUARD;
   T->tape->length           = T->maximum_time * 2 + 1;

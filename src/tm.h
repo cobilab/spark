@@ -11,7 +11,7 @@
 #define DEFAULT_TAPE_GUARD            10
 #define DEFAULT_TAPE_LENGTH           60000
 #define DEFAULT_TAPE_INITIAL_POSITION 30000
-#define MAXIMUM_MOVES                 3
+#define MAXIMUM_MOVES                 3 //XXX: CHECK BONDS
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -45,6 +45,7 @@ typedef struct{
   TAPE      *tape;
   RULE      **rules;
   ALPHABET  *alphabet;
+  uint8_t   halt;
   uint8_t   *moves;
   uint32_t  alphabet_size;
   uint32_t  number_of_states;
@@ -70,8 +71,9 @@ void        PrintTape            (TM *);
 void        PrintTapeInWritter   (TM *, FILE *);
 void        PrintRulesInWritter  (TM *, FILE *);
 void        PrintTapePres        (TM *, double);
-TM          *CreateTM            (uint8_t *, uint32_t, uint32_t, uint32_t, 
-		                  uint32_t, uint32_t, uint8_t, uint32_t);
+TM          *CreateTM            (uint8_t, uint8_t *, uint32_t, uint32_t, 
+		                  uint32_t, uint32_t, uint32_t, uint8_t, 
+				  uint32_t);
 void        LoadTMRules          (TM *, uint8_t *);
 uint8_t     RandFillTM           (TM *, RAND *);
 uint8_t     UpdateTM             (TM *);
