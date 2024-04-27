@@ -11,7 +11,7 @@
 #define DEFAULT_TAPE_GUARD            10
 #define DEFAULT_TAPE_LENGTH           60000
 #define DEFAULT_TAPE_INITIAL_POSITION 30000
-#define MAXIMUM_MOVES                 3 //XXX: CHECK BONDS
+#define MAXIMUM_MOVES                 3
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

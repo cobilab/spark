@@ -19,8 +19,12 @@ void PrintActions(TM *T){
 
   fprintf(stderr, "Actions        : ");
   for(x = 0 ; x < MAXIMUM_MOVES ; ++x)
-    if(x == MAXIMUM_MOVES-1) fprintf(stderr, " %c",  T->moves[x]);
-    else                     fprintf(stderr, " %c,", T->moves[x]);
+    if(x == MAXIMUM_MOVES-1 && !T->halt) 
+      fprintf(stderr, " %c",  T->moves[x]);
+    else 
+      fprintf(stderr, " %c,", T->moves[x]);
+  if(T->halt)
+    fprintf(stderr, " %c", T->moves[3]);
   fprintf(stderr, "\n");
 
   return;
@@ -224,10 +228,11 @@ TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t
   T->initial_state     = initial_state;
   T->current_state     = T->initial_state;
   T->mode              = mode;
-  T->moves             = (uint8_t *) Calloc(MAXIMUM_MOVES + 1, sizeof(uint8_t));
+  T->moves             = (uint8_t *) Calloc(MAXIMUM_MOVES + 2, sizeof(uint8_t));
   T->moves[0]          = '<';
   T->moves[1]          = '>';
   T->moves[2]          = '=';
+  T->moves[3]          = '.';
 
   T->rules = (RULE **) Calloc(T->alphabet_size, sizeof(RULE *));
   for(x = 0 ; x < T->alphabet_size ; ++x)
