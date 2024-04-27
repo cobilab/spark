@@ -63,9 +63,10 @@ ARGUMENTS
      -x,        --version,              display version number,      
      -v,        --verbose,              verbose mode (more info),    
      -f,        --force,                force output overwrite,      
-     -t,        --threads,              number of threads (df:4),   
+     -t <INT>,  --threads <INT>,        number of threads (df:4),   
                                                                      
      -sc,       --skip-complexity,      skip complexity process,     
+     -ha,       --halt,                 consider the machine halts,  
      -ht,       --hide-tape,            hide tape output,            
      -sa,       --show-all-tape,        show all tape iterations,    
      -hr,       --hide-rules,           hide rules in top file,      
@@ -78,10 +79,12 @@ ARGUMENTS
      -ms <INT>, --max-time <INT>,       maximum time before halt,    
      -ma <INT>, --max-amplitude <INT>,  maximum tape amplitude,      
      -ia <INT>, --min-amplitude <INT>,  minimum tape amplitude,      
+     -tm <INT>, --machines <INT>,       machines number by thread,   
                                                                      
      -al <STR>, --alphabet <STR>,       alphabet to use (String),    
                                                                      
      -rs <INT>, --seed <INT>,           seed in random generation,   
+     -rt <INT>, --rand-type <INT>,      random type: 0=sys,1=rand,   
      -dl <INT>, --delay <INT>,          visualization delay (ms),    
      -tp <INT>, --top <INT>,            high complexity top tapes,   
      -co <INT>, --ctx <INT>,            complexity context order,    
@@ -106,8 +109,8 @@ EXAMPLES
      ./SPARK --top 50 --mode 3 --states-number 9 --input seq.txt     
                                                                      
 COPYRIGHT                                                            
-     Copyright 2017-2023, D. Pratas, IEETA, University of Aveiro.    
-     License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>. 
+     Copyright 2017-2024, D. Pratas, IEETA, University of Aveiro.    
+     License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>.
 
 ```
 
