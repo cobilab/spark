@@ -48,7 +48,7 @@ or
 this will output the following
 ```
 NAME                                                                 
-     SPARK, v1-r1.                                                 
+     SPARK, v1-r2.                                                 
                                                                      
 SYNOPSIS                                                             
      ./SPARK [OPTION]...                                             
@@ -63,7 +63,7 @@ ARGUMENTS
      -x,        --version,              display version number,      
      -v,        --verbose,              verbose mode (more info),    
      -f,        --force,                force output overwrite,      
-     -t <INT>,  --threads <INT>,        number of threads (df:4),   
+     -t <INT>,  --threads <INT>,        number of threads (def:4),  
                                                                      
      -sc,       --skip-complexity,      skip complexity process,     
      -ha,       --halt,                 consider the machine halts,  
@@ -73,6 +73,7 @@ ARGUMENTS
                                                                      
      -rt,       --random-tape,          random tape (input size),    
                                                                      
+     -ip <INT>, --initial-pos   <INT>,  initial position to start,   
      -is <INT>, --initial-state <INT>,  initial state to start,      
      -as <INT>, --alphabet-size <INT>,  alphabet cardinality,        
      -sn <INT>, --states-number <INT>,  number of states,            
@@ -101,6 +102,7 @@ ARGUMENTS
      -ot <FILE>, --output-tape <FILE>,  output TM tape to file,      
      -ox <FILE>, --output-top  <FILE>,  output complexity top,       
      -ir <FILE>, --input-rules <FILE>,  load input rules for TM,     
+     -it <FILE>, --input-tape  <FILE>,  load input tape for TM,      
                                                                      
      -i <FILE>, --input <FILE>,         input sequence filename.     
                                                                      
@@ -111,7 +113,6 @@ EXAMPLES
 COPYRIGHT                                                            
      Copyright 2017-2024, D. Pratas, IEETA, University of Aveiro.    
      License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>.
-
 ```
 
 ## CITATION ##
