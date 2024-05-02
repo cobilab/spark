@@ -38,7 +38,6 @@ double CalculateBits(void){
 // - - - - - - - - - C A L C U L A T E   I N P U T   B I T S - - - - - - - - - -
 
 double CalculateInputBits(void){
-
  return ((double) log2(P->alphabet_size) * NBytesInFile(P->input_sequence));
  }
 
@@ -91,7 +90,7 @@ void PrintInformation(void){
 
     case 4:
     fprintf(stderr, "Threads (T)    :  %u\n", P->threads);
-    fprintf(stderr, "Machines by T  :  %"PRIu64"\n", P->thread_machines);
+    fprintf(stderr, "Machines by T  :  %u\n", P->thread_machines);
     fprintf(stderr, "Context (FCM)  :  %u\n", P->ctx);
     fprintf(stderr, "Max time       :  %u\n", P->max_time);
     fprintf(stderr, "Max amplitude  :  %u\n", P->max_amplitude);
@@ -308,6 +307,9 @@ void XSearchTMs(THREADS T){
 
     initial_state = TM->current_state;
     RandFillTM(TM, R);
+    
+    if(strcmp(P->input_tape, "-")) 
+      LoadTMTape(TM, P->input_tape);
 
     for(time = 0 ; time < P->max_time ; ++time){
       UpdateTM(TM);
@@ -324,7 +326,7 @@ void XSearchTMs(THREADS T){
 
 	if(P->verbose) fprintf(stdout, "Found TM NRC   :  %3lf\n", nrc);
 
-        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", nrc,
+        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%"PRIu64"\t", nrc,
         P->seed, TM->maximum_time, TM->number_of_states,
         TM->alphabet_size, initial_state);
 
@@ -371,6 +373,9 @@ void SearchTMs(THREADS T){
     initial_state = TM->current_state;
     RandFillTM(TM, R);
 
+    if(strcmp(P->input_tape, "-")) 
+      LoadTMTape(TM, P->input_tape);
+
     for(time = 0 ; time < P->max_time ; ++time){
       UpdateTM(TM);
       }
@@ -386,7 +391,7 @@ void SearchTMs(THREADS T){
 	
 	if(P->verbose) fprintf(stderr, "Found TM NRC   :  %3lf\n", nrc);
 
-        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t", nrc,
+        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%"PRIu64"\t", nrc,
         P->seed, TM->maximum_time, TM->number_of_states,
         TM->alphabet_size, initial_state);
 
@@ -525,7 +530,10 @@ void ComplexityTMs(THREADS T){
     
     initial_state = TM->current_state;
     RandFillTM(TM, R);
-    
+   
+    if(strcmp(P->input_tape, "-")) 
+      LoadTMTape(TM, P->input_tape);
+
     for(time = 0 ; time < P->max_time ; ++time){
       UpdateTM(TM);
       }
@@ -537,8 +545,8 @@ void ComplexityTMs(THREADS T){
 
       if(complexity > P->threshold){      
     
-        fprintf(Writter, "%.3lf\t%u\t%u\t%u\t%u\t%u\t%u\t", complexity, 
-	P->seed, amplitude, TM->maximum_time, TM->number_of_states,
+        fprintf(Writter, "%.3lf\t%u\t%"PRIu64"\t%u\t%u\t%u\t%"PRIu64"\t", 
+	complexity, P->seed, amplitude, TM->maximum_time, TM->number_of_states,
        	TM->alphabet_size, initial_state);
 
         if(!P->hide_rules) 
@@ -620,6 +628,9 @@ void SchoolSimple(void){
     LoadTMRules(TM, P->input_rules);
   else 
     RandFillTM(TM, R);
+
+  if(strcmp(P->input_tape, "-")) 
+    LoadTMTape(TM, P->input_tape);
 
   PrintAlphabet (TM);
   PrintStates   (TM);
@@ -705,6 +716,7 @@ int32_t main(int argc, char *argv[]){
   P->output_tape      = ArgString ("-",       p, argc, "-ot", "--output-tape");
   P->output_top       = ArgString ("top.txt", p, argc, "-ox", "--output-top");
   P->input_rules      = ArgString ("-",       p, argc, "-ir", "--input-rules");
+  P->input_tape       = ArgString ("-",       p, argc, "-it", "--input-tape");
   P->input_sequence   = ArgString ("-",       p, argc, "-i",  "--input");
 
   if(!P->seed) 

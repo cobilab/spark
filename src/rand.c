@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "rand.h"
 #include "mem.h"
+#include "misc.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // - - - - - - - - - - - - - - - C R E A T E   R A N D - - - - - - - - - - - - -  
@@ -17,7 +18,7 @@ RAND *CreateRand(uint8_t type){
   R->source = NULL;
   
   if(R->type == 0){
-    R->source = fopen(RAND_DEV, "r");
+    R->source = Fopen(RAND_DEV, "r");
     if(R->source == NULL){
       fprintf(stderr, "Error: unable to open %s\n", RAND_DEV);
       exit(1);

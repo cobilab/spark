@@ -9,8 +9,8 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #define DEFAULT_TAPE_GUARD            10
-#define DEFAULT_TAPE_LENGTH           60000
-#define DEFAULT_TAPE_INITIAL_POSITION 30000
+#define DEFAULT_TAPE_LENGTH           200000
+#define DEFAULT_TAPE_INITIAL_POSITION 100000
 #define MAXIMUM_MOVES                 3
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,6 +75,8 @@ TM          *CreateTM            (uint8_t, uint8_t *, uint32_t, uint32_t,
 		                  uint32_t, uint32_t, uint32_t, uint8_t, 
 				  uint32_t);
 void        LoadTMRules          (TM *, uint8_t *);
+void        LoadTMTape           (TM *, uint8_t *);
+void        ResetTape            (TM *);
 uint8_t     RandFillTM           (TM *, RAND *);
 uint8_t     UpdateTM             (TM *);
 void        RemoveTM             (TM *);

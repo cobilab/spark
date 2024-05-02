@@ -57,7 +57,6 @@ void PrintArgs(PARAMETERS *P){
   "no" : "yes"); 
   fprintf(stderr, "Force mode ......................... %s\n", !P->force ? 
   "no" : "yes");
-  //fprintf(stderr, "Target file ........................ %s\n", P->tar); 
   }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

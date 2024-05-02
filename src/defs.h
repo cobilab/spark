@@ -52,6 +52,7 @@ typedef struct{
   char      *output_top;
   char      *output_tape;
   char      *input_rules;
+  char      *input_tape;
   char      *input_sequence;
   }
 PARAMETERS;
@@ -63,7 +64,7 @@ THREADS;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#define RELEASE                1
+#define RELEASE                2
 #define VERSION                1
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
