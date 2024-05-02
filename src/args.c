@@ -21,6 +21,21 @@ uint32_t l, uint32_t u){
   return d;
   }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int32_t ArgNNumber(int32_t d, char *a[], uint32_t n, char *s, char *s2,
+int32_t l, int32_t u){
+  int32_t x;
+  for( ; --n ; ) if(!strcmp(s, a[n]) || !strcmp(s2, a[n])){
+    if((x = atoi(a[n+1])) < l || x > u){
+      fprintf(stderr, "[x] Invalid number! Interval: [%u;%u].\n", l, u);
+      exit(EXIT_FAILURE);
+      }
+    return x;
+    }
+  return d;
+  }
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 double ArgDouble(double def, char *arg[], uint32_t n, char *str, char *str2){

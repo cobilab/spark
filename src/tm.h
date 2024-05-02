@@ -54,6 +54,7 @@ typedef struct{
   uint32_t  minimum_amplitude;
   uint32_t  current_state;
   uint32_t  initial_state;
+  int32_t   initial_position;
   uint32_t  rand_type;
   uint8_t   mode;
   }
@@ -73,7 +74,7 @@ void        PrintRulesInWritter  (TM *, FILE *);
 void        PrintTapePres        (TM *, double);
 TM          *CreateTM            (uint8_t, uint8_t *, uint32_t, uint32_t, 
 		                  uint32_t, uint32_t, uint32_t, uint8_t, 
-				  uint32_t);
+				  uint32_t, int32_t);
 void        LoadTMRules          (TM *, uint8_t *);
 void        LoadTMTape           (TM *, uint8_t *);
 void        ResetTape            (TM *);

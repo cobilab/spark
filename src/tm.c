@@ -267,7 +267,8 @@ void PrintTM(TM *T){
 
 TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t 
   number_of_states, uint32_t maximum_time, uint32_t maximum_amplitude, 
-  uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state){
+  uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state, int32_t 
+  initial_position){
   
   uint32_t x;
 
@@ -281,6 +282,7 @@ TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t
   T->minimum_amplitude = minimum_amplitude;
   T->initial_state     = initial_state;
   T->current_state     = T->initial_state;
+  T->initial_position  = initial_position;
   T->mode              = mode;
   T->moves             = (uint8_t *) Calloc(MAXIMUM_MOVES + 2, sizeof(uint8_t));
   T->moves[0]          = '<';
@@ -299,9 +301,7 @@ TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t
   T->tape->time             = 0;
   T->tape->guard            = DEFAULT_TAPE_GUARD;
   
-  //T->tape->length           = T->maximum_time * 2 + 1;
   T->tape->length           = DEFAULT_TAPE_LENGTH + 1;
-  //T->tape->current_position = T->maximum_time + 1;
   T->tape->current_position = DEFAULT_TAPE_INITIAL_POSITION + 1;
 
   T->tape->minimum_position = T->tape->current_position - T->tape->guard;

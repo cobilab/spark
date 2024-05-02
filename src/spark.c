@@ -293,7 +293,8 @@ void XSearchTMs(THREADS T){
   CModel *CM = CreateCModel(P->ctx, 1, 0, 0, 0, P->alphabet_size, 0.9, 0.9);
 
   TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states,
-  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state,
+  P->initial_position);
 
   CheckInputAlphabet(TM->alphabet, P->input_sequence);
 
@@ -363,7 +364,8 @@ void SearchTMs(THREADS T){
   CModel *CM = CreateCModel(P->ctx, 1, 0, 0, 0, P->alphabet_size, 0.9, 0.9);
   
   TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states,
-  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state,
+  P->initial_position);
 
   CheckInputAlphabet(TM->alphabet, P->input_sequence);
 
@@ -521,7 +523,8 @@ void ComplexityTMs(THREADS T){
     P->initial_state = GetRandNumber(R) % P->number_of_states;
 
   TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states, 
-  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state,
+  P->initial_position);
 
   fprintf(Writter, "NC\tSeed\tsize\tTime\tStates\tAlphabet"
 		   "\tInitState\tRules\tTape\n");
@@ -622,7 +625,8 @@ void SchoolSimple(void){
   PrintInformation();
 
   TM *TM = CreateTM(P->halt, P->alphabet, P->alphabet_size, P->number_of_states, 
-  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state);
+  P->max_time, P->max_amplitude, P->min_amplitude, P->mode, P->initial_state,
+  P->initial_position);
 
   if(strcmp(P->input_rules, "-"))
     LoadTMRules(TM, P->input_rules);
@@ -631,6 +635,11 @@ void SchoolSimple(void){
 
   if(strcmp(P->input_tape, "-")) 
     LoadTMTape(TM, P->input_tape);
+
+  if(TM->initial_position != 0 && 
+  TM->initial_position <= DEFAULT_TAPE_INITIAL_POSITION &&
+  TM->initial_position >= -DEFAULT_TAPE_INITIAL_POSITION)
+    TM->tape->current_position += TM->initial_position;
 
   PrintAlphabet (TM);
   PrintStates   (TM);
@@ -695,6 +704,8 @@ int32_t main(int argc, char *argv[]){
   P->random_tape      = ArgState (0,           p, argc, "-rt", "--random-tape");
  
   P->threads          = ArgNumber (DEFT,  p, argc, "-t",  "--threads", 0, 5000);
+  P->initial_position = ArgNNumber(0,     p, argc, "-ip", "--initial-pos", INT_MIN, 
+		        INT_MAX);
   P->initial_state    = ArgNumber (RDST,  p, argc, "-is", "--initial-state", 0, 255);
   P->alphabet_size    = ArgNumber (4,     p, argc, "-as", "--alphabet-size", 2, 254);
   P->number_of_states = ArgNumber (7,     p, argc, "-sn", "--states-number", 1, 99);

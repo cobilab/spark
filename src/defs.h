@@ -28,6 +28,7 @@ typedef struct{
   U8        hide_rules;
   U8        rand_type;
   int32_t   initial_state;
+  int32_t   initial_position;
   uint32_t  top;
   uint32_t  threads;
   double    threshold;

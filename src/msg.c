@@ -37,6 +37,7 @@ void PrintMenu(void){
   "                                                                     \n"
   "     -rt,       --random-tape,          random tape (input size),    \n"
   "                                                                     \n"
+  "     -ip <INT>, --initial-pos   <INT>,  initial position to start,   \n"
   "     -is <INT>, --initial-state <INT>,  initial state to start,      \n"
   "     -as <INT>, --alphabet-size <INT>,  alphabet cardinality,        \n"
   "     -sn <INT>, --states-number <INT>,  number of states,            \n"
