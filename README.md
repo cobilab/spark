@@ -12,7 +12,7 @@
   <img src="imgs/logo.png" alt="SPARK" width="250" />
 </p>
 
-<h2 align="center"><b>SPARK: Simulation and Search for Exact or Approximate Turing Machines</b></h2>
+<h2 align="center"><b>SPARK: simulation and search for exact and approximate Turing machines with specific characteristics</b></h2>
 
 ---
 
