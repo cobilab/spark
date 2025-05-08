@@ -36,7 +36,7 @@ void PrintMenu(void){
   "     -sa,       --show-all-tape,        show all tape iterations,    \n"
   "     -hr,       --hide-rules,           hide rules in top file,      \n"
   "                                                                     \n"
-  "     -rt,       --rand-tape,            random tape (input size),    \n"
+  "     -rp,       --rand-tape,            random tape (input size),    \n"
   "                                                                     \n"
   "     -ip <INT>, --initial-pos   <INT>,  initial position to start,   \n"
   "     -is <INT>, --initial-state <INT>,  initial state to start,      \n"
