@@ -1,150 +1,184 @@
 <div align="center">
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
-[![AFM](https://img.shields.io/static/v1.svg?label=Method&message=alignment-free&color=yellow)](#)
-[![EXT](https://img.shields.io/static/v1.svg?label=Extra&message=color-ascii&color=orange)](#)
-[![MOD](https://img.shields.io/static/v1.svg?label=Mode&message=multi&color=blue)](#)
-[![VER](https://img.shields.io/static/v1.svg?label=Version&message=2.1&color=green)](#)
+[![Method: Alignment-Free](https://img.shields.io/static/v1.svg?label=Method&message=alignment-free&color=yellow)](#)
+[![Extra: Color ASCII](https://img.shields.io/static/v1.svg?label=Extra&message=color-ascii&color=orange)](#)
+[![Mode: Multi](https://img.shields.io/static/v1.svg?label=Mode&message=multi&color=blue)](#)
+[![Version: 2.1](https://img.shields.io/static/v1.svg?label=Version&message=2.1&color=green)](#)
 
 </div>
 
-<p align="center"><img src="imgs/logo.png" alt="SPARK" width="250" border="0" /></p>
 <p align="center">
-<b>SPARK: simulation and search for exact or approximate Turing Machines</b>. 
+  <img src="imgs/logo.png" alt="SPARK" width="250" />
 </p>
 
-<p align="justify">
-This program schools, simulates, and searches for exact or approximate Turing machines (TMs) with specific characteristics. It uses alignment-free approaches for searching the tapes and ascii color for beter understanding. Time (sleep) changes are flexible and well as modes.
-</p>
+<h2 align="center"><b>SPARK: Simulation and Search for Exact or Approximate Turing Machines</b></h2>
 
-## INSTALLATION ##
+---
 
-CMake is needed for installation (http://www.cmake.org/). CMake can be downloaded directly from http://www.cmake.org/cmake/resources/software.html or by any appropriate packet manager. In the following instructions we show the procedure to install, compile, and run SPARK:
+SPARK is a high-performance C program designed to **simulate**, **search**, and **analyze** exact or approximate Turing Machines (TMs) based on custom configurations. It features **alignment-free methods**, **colorized ASCII visualizations**, and supports multiple execution **modes** for various research needs.
 
-<pre>
+---
+
+## 🚀 Features
+
+- Alignment-free TM tape analysis
+- Flexible halting and complexity configuration
+- Multi-threaded simulation and TM search
+- Rich color ASCII visualization (can be disabled)
+- Configurable modes including evolutionary and impossible TM search
+- Lightweight and fast, written in C with minimal dependencies
+
+---
+
+## 🔧 Installation
+
+Requires [CMake](http://www.cmake.org/) and a C compiler.
+
+### Ubuntu/Debian:
+```bash
 sudo apt-get install cmake git
 git clone https://github.com/cobilab/spark.git
 cd spark/src/
 cmake .
 make
-</pre>
+```
 
-## EXECUTION
+---
 
-Run SPARK
-<pre>
-./SPARK 
-</pre>
+## ▶️ Usage
 
-## PARAMETERS
-
-To see the possible options type
-<pre>
+To run SPARK:
+```bash
 ./SPARK
-</pre>
-or
-<pre>
+```
+
+To see available options:
+```bash
 ./SPARK -h
-</pre>
-this will output the following
-```
-                                                                     
-     ███████  ███████  ███████  ███████  ██   ███                    
-     ██       ██   ██  ██   ██  ██   ██  ██  ███                     
-     ███████  ███████  ███████  ███████  ██████                      
-          ██  ██       ██   ██  ██ ███   ██  ███                     
-     ███████  ██       ██   ██  ██  ███  ██   ███                    
-                                                                     
-NAME                                                                 
-     SPARK, v2-r1.                                                 
-                                                                     
-SYNOPSIS                                                             
-     ./SPARK [OPTION(S)]...                                          
-                                                                     
-DESCRIPTION                                                          
-     This program schools, simulates, and searches for exact or      
-     approximate Turing machines (TM) w/ specific characteristics.   
-                                                                     
-ARGUMENTS                                                            
-     -h,        --help,                 give this help,              
-     -a,        --about,                display extra info,          
-     -x,        --version,              display version number,      
-     -v,        --verbose,              verbose mode (more info),    
-     -f,        --force,                force output overwrite,      
-     -t <INT>,  --threads <INT>,        number of threads (def:4),  
-                                                                     
-     -sc,       --skip-complexity,      skip complexity process,     
-     -ha,       --halt,                 consider the machine halts,  
-     -ht,       --hide-tape,            hide tape output,            
-     -hh,       --hide-header,          hide header output,          
-     -sa,       --show-all-tape,        show all tape iterations,    
-     -hr,       --hide-rules,           hide rules in top file,      
-                                                                     
-     -rt,       --rand-tape,            random tape (input size),    
-                                                                     
-     -ip <INT>, --initial-pos   <INT>,  initial position to start,   
-     -is <INT>, --initial-state <INT>,  initial state to start,      
-     -as <INT>, --alphabet-size <INT>,  alphabet cardinality,        
-     -sn <INT>, --states-number <INT>,  number of states,            
-     -ms <INT>, --max-time <INT>,       maximum time before halt,    
-     -ma <INT>, --max-amplitude <INT>,  maximum tape amplitude,      
-     -ia <INT>, --min-amplitude <INT>,  minimum tape amplitude,      
-     -dt <INT>, --distribution  <DBL>,  max distribution threshold,  
-     -st <INT>, --step <INT>,           step to evaluate machine,    
-     -tm <INT>, --machines <INT>,       machines number by thread,   
-                                                                     
-     -al <STR>, --alphabet <STR>,       alphabet to use (String),    
-                                                                     
-     -rs <INT>, --seed <INT>,           seed in random generation,   
-     -rt <INT>, --rand-type <INT>,      random type: 0=sys,1=rand,   
-     -dl <INT>, --delay <INT>,          visualization delay (ms),    
-     -tp <INT>, --top <INT>,            high complexity top tapes,   
-     -co <INT>, --ctx <INT>,            complexity context order,    
-     -th <DBL>, --threshold <DBL>,      threshold: NC(3) | NRC(4),   
-                                                                     
-     -md <INT>, --mode <INT>,           running SPARK modes:         
-                                          1 - School (simple),       
-                                          2 - School (advanced),     
-                                          3 - NC-Complexity top,     
-                                          4 - NRC search,            
-                                          5 - NRC X search,          
-                                          6 - Genetic,               
-                                          7 - Impossible,            
-                                                                     
-     -ot <FILE>, --output-tape <FILE>,  output TM tape to file,      
-     -ox <FILE>, --output-top  <FILE>,  output complexity top,       
-     -ir <FILE>, --input-rules <FILE>,  load input rules for TM,     
-     -it <FILE>, --input-tape  <FILE>,  load input tape for TM,      
-                                                                     
-     -in <FILE>, --input <FILE>,        input sequence filename.     
-                                                                     
-EXAMPLES                                                             
-     ./SPARK --alphabet-size 5 --states-number 5 --input seq.txt     
-     ./SPARK --top 50 --mode 3 --states-number 9 --input seq.txt     
-                                                                     
-COPYRIGHT                                                            
-     Copyright 2017-2025, D. Pratas, IEETA, University of Aveiro.    
-     License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>.
 ```
 
-## CITATION ##
+---
 
-On using this software/method please cite:
+## ⚙️ Command-Line Parameters
 
-<pre>
+### 🧭 General Options
+| Short | Long         | Description                         |
+|-------|--------------|-------------------------------------|
+| `-h`  | `--help`     | Display help menu                   |
+| `-a`  | `--about`    | Show about info                     |
+| `-x`  | `--version`  | Display version info                |
+| `-v`  | `--verbose`  | Verbose output                      |
+| `-f`  | `--force`    | Force output overwrite              |
+| `-ha` | `--halt`     | Consider only halting TMs           |
+
+### 🧪 Input Options
+| Short  | Long             | Description                       |
+|--------|------------------|-----------------------------------|
+| `-in`  | `--input`         | Input sequence file              |
+| `-ir`  | `--input-rules`   | Input rules file                 |
+| `-it`  | `--input-tape`    | Input tape file                  |
+| `-al`  | `--alphabet`      | Custom alphabet string           |
+
+### 📤 Output Options
+| Short  | Long             | Description                       |
+|--------|------------------|-----------------------------------|
+| `-ot`  | `--output-tape`  | Output tape file                 |
+| `-ox`  | `--output-top`   | Output top complexity file       |
+
+### 🧮 Simulation Parameters
+| Short  | Long                | Description                         |
+|--------|---------------------|-------------------------------------|
+| `-as`  | `--alphabet-size`   | Alphabet size (2–254, default: 4)   |
+| `-sn`  | `--states-number`   | Number of states (default: 7)       |
+| `-ip`  | `--initial-pos`     | Initial tape position               |
+| `-is`  | `--initial-state`   | Initial state                       |
+| `-md`  | `--mode`            | Execution mode (see below)          |
+| `-tm`  | `--machines`        | Machines per thread (default: 10000)|
+| `-t`   | `--threads`         | Number of threads                   |
+| `-ms`  | `--max-time`        | Maximum simulation time             |
+| `-ma`  | `--max-amplitude`   | Maximum tape amplitude              |
+| `-ia`  | `--min-amplitude`   | Minimum tape amplitude              |
+
+### 📊 Output Control
+| Short  | Long                | Description                         |
+|--------|---------------------|-------------------------------------|
+| `-sa`  | `--show-all-tape`   | Show all tape iterations            |
+| `-ht`  | `--hide-tape`       | Hide tape output                    |
+| `-hh`  | `--hide-header`     | Hide table header                   |
+| `-hr`  | `--hide-rules`      | Hide rule output                    |
+| `-hc`  | `--hide-color`      | Disable colorized output            |
+
+### 🎛️ Advanced Parameters
+| Short  | Long                | Description                         |
+|--------|---------------------|-------------------------------------|
+| `-rs`  | `--seed`            | Random seed (0 = current time)      |
+| `-rt`  | `--rand-tape`       | Initialize tape randomly            |
+| `-rt`  | `--rand-type`       | Random generator (0=sys, 1=rand)    |
+| `-co`  | `--context`         | Complexity context window size      |
+| `-sc`  | `--skip-complexity` | Skip complexity analysis            |
+| `-th`  | `--threshold`       | Complexity threshold                |
+| `-dt`  | `--distribution`    | Max distribution threshold          |
+| `-st`  | `--step`            | Step size for evaluation            |
+| `-dl`  | `--delay`           | Delay in microseconds (default: 50000) |
+| `-tp`  | `--top`             | Number of top entries to keep       |
+
+> 🔁 **Note**: `-rt` is reused for both `--rand-tape` and `--rand-type`. These should not be used together.
+
+---
+
+## 📋 Execution Modes
+
+Selected using `-md` / `--mode`:
+
+| Value | Mode Name             | Description                         |
+|-------|-----------------------|-------------------------------------|
+| 1     | School (Simple)       | Basic Turing machine simulation     |
+| 2     | School (Advanced)     | Enhanced school TM search           |
+| 3     | NC Complexity         | Search top TMs by complexity        |
+| 4     | NRC                   | Non-regular complexity exploration  |
+| 5     | NRC-X                 | Extended NRC model                  |
+| 6     | Genetic               | Genetic search and evolution        |
+| 7     | Impossible            | Search for 'impossible' TMs         |
+
+---
+
+## 📚 Examples
+
+```bash
+# Basic example
+./SPARK -as 4 -sn 5 -in data/seq.txt
+
+# Complex search
+./SPARK --top 100 --mode 3 --states-number 8 --input data/seq.txt --output-top results.txt
+```
+
+---
+
+## 📖 Citation
+
+If you use SPARK in your research, please cite:
+
+```bibtex
 SPARK: a C program for simulating and searching exact or
-approximate Turing machines (TM) with specific characteristics. 
-D. Pratas. https://github.com/cobilab/spark.
-</pre>
+approximate Turing machines (TM) with specific characteristics.
+D. Pratas. https://github.com/cobilab/spark
+```
 
-## ISSUES ##
+---
 
-For any issue let us know at [issues link](https://github.com/cobilab/spark/issues).
+## 🐛 Issues & Support
 
-## LICENSE ##
+Please use the [GitHub Issues Page](https://github.com/cobilab/spark/issues) to report bugs or request features.
 
-GPL v3.
+---
 
-For more information:
-<pre>http://www.gnu.org/licenses/gpl-3.0.html</pre>
+## 📜 License
 
+SPARK is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.html).
+
+---
+
+<p align="center">
+  <em>© 2017–2025, D. Pratas, IEETA, University of Aveiro</em>
+</p>
