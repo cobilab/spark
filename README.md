@@ -37,7 +37,7 @@ Requires [CMake](http://www.cmake.org/) and a C compiler.
 
 ### Ubuntu/Debian CMake installation:
 ```bash
-sudo apt-get install cmake git
+sudo apt-get install cmake
 ```
 
 ### Ubuntu/Debian SPARK installation:
