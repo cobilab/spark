@@ -35,9 +35,13 @@ SPARK is a high-performance C program designed to **simulate**, **search**, and 
 
 Requires [CMake](http://www.cmake.org/) and a C compiler.
 
-### Ubuntu/Debian:
+### Ubuntu/Debian CMake installation:
 ```bash
 sudo apt-get install cmake git
+```
+
+### Ubuntu/Debian SPARK installation:
+```bash
 git clone https://github.com/cobilab/spark.git
 cd spark/src/
 cmake .
@@ -108,6 +112,7 @@ To see available options:
 | `-hh`  | `--hide-header`     | Hide table header                   |
 | `-hr`  | `--hide-rules`      | Hide rule output                    |
 | `-hc`  | `--hide-color`      | Disable colorized output            |
+| `-dl`  | `--delay`           | Delay in microseconds (default: 50000) |
 
 ### 🎛️ Advanced Parameters
 | Short  | Long                | Description                         |
@@ -120,7 +125,6 @@ To see available options:
 | `-th`  | `--threshold`       | Complexity threshold                |
 | `-dt`  | `--distribution`    | Max distribution threshold          |
 | `-st`  | `--step`            | Step size for evaluation            |
-| `-dl`  | `--delay`           | Delay in microseconds (default: 50000) |
 | `-tp`  | `--top`             | Number of top entries to keep       |
 
 > 🔁 **Note**: `-rt` is reused for both `--rand-tape` and `--rand-type`. These should not be used together.
@@ -178,7 +182,3 @@ Please use the [GitHub Issues Page](https://github.com/cobilab/spark/issues) to 
 SPARK is licensed under the [GNU GPL v3](http://www.gnu.org/licenses/gpl-3.0.html).
 
 ---
-
-<p align="center">
-  <em>© 2017–2025, D. Pratas, IEETA, University of Aveiro</em>
-</p>
