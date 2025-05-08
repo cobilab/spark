@@ -4,6 +4,7 @@
 [![AFM](https://img.shields.io/static/v1.svg?label=Method&message=alignment-free&color=yellow)](#)
 [![EXT](https://img.shields.io/static/v1.svg?label=Extra&message=color-ascii&color=orange)](#)
 [![MOD](https://img.shields.io/static/v1.svg?label=Mode&message=multi&color=blue)](#)
+[![VER](https://img.shields.io/static/v1.svg?label=Version&message=2&color=green)](#)
 
 </div>
 
