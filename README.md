@@ -69,81 +69,63 @@ To see available options:
 ### 🧭 General Options
 | Short | Long         | Description                         |
 |-------|--------------|-------------------------------------|
-| `-h`  | `--help`     | Display help menu                   |
-| `-a`  | `--about`    | Show about info                     |
-| `-x`  | `--version`  | Display version info                |
-| `-v`  | `--verbose`  | Verbose output                      |
-| `-f`  | `--force`    | Force output overwrite              |
+| `-h`  | `--help`     | Display help menu *(FLAG)*          |
+| `-a`  | `--about`    | Show about info *(FLAG)*            |
+| `-x`  | `--version`  | Display version info *(FLAG)*       |
+| `-v`  | `--verbose`  | Verbose output *(FLAG)*             |
+| `-f`  | `--force`    | Force output overwrite *(FLAG)*     |
 
 ### 🧪 Input Options
-| Short  | Long             | Description                       |
-|--------|------------------|-----------------------------------|
-| `-in`  | `--input`         | Input sequence file              |
-| `-ir`  | `--input-rules`   | Input rules file                 |
-| `-it`  | `--input-tape`    | Input tape file                  |
-| `-al`  | `--alphabet`      | Custom alphabet string           |
+| Short  | Long             | Description                          |
+|--------|------------------|--------------------------------------|
+| `-in`  | `--input`         | Input sequence file *(FILE)*         |
+| `-ir`  | `--input-rules`   | Input rules file *(FILE)*            |
+| `-it`  | `--input-tape`    | Input tape file *(FILE)*             |
+| `-al`  | `--alphabet`      | Custom alphabet string *(STR)*       |
 
 ### 📤 Output Options
-| Short  | Long             | Description                       |
-|--------|------------------|-----------------------------------|
-| `-ot`  | `--output-tape`  | Output tape file                 |
-| `-ox`  | `--output-top`   | Output top complexity file       |
+| Short  | Long             | Description                          |
+|--------|------------------|--------------------------------------|
+| `-ot`  | `--output-tape`  | Output tape file *(FILE)*            |
+| `-ox`  | `--output-top`   | Output top complexity file *(FILE)*  |
 
 ### 🧮 Simulation Parameters
-| Short  | Long                | Description                         |
-|--------|---------------------|-------------------------------------|
-| `-as`  | `--alphabet-size`   | Alphabet size (2–254, default: 4)   |
-| `-sn`  | `--states-number`   | Number of states (default: 7)       |
-| `-ip`  | `--initial-pos`     | Initial tape position               |
-| `-is`  | `--initial-state`   | Initial state                       |
-| `-md`  | `--mode`            | Execution mode (see below)          |
-| `-tm`  | `--machines`        | Machines per thread (default: 10000)|
-| `-t`   | `--threads`         | Number of threads                   |
-| `-ms`  | `--max-time`        | Maximum simulation time             |
-| `-ma`  | `--max-amplitude`   | Maximum tape amplitude              |
-| `-ia`  | `--min-amplitude`   | Minimum tape amplitude              |
-| `-ha`  | `--halt`            | TMs can halt                        |
+| Short  | Long                | Description                                      |
+|--------|---------------------|--------------------------------------------------|
+| `-as`  | `--alphabet-size`   | Alphabet size *(INT: 2–254, default: 4)*         |
+| `-sn`  | `--states-number`   | Number of states *(INT, default: 7)*             |
+| `-ip`  | `--initial-pos`     | Initial tape position *(INT)*                    |
+| `-is`  | `--initial-state`   | Initial state *(INT)*                            |
+| `-md`  | `--mode`            | Execution mode *(INT: 1–7)*                      |
+| `-tm`  | `--machines`        | Machines per thread *(INT, default: 10000)*      |
+| `-t`   | `--threads`         | Number of threads *(INT)*                        |
+| `-ms`  | `--max-time`        | Max time before halt *(INT)*                     |
+| `-ma`  | `--max-amplitude`   | Max tape amplitude *(INT)*                       |
+| `-ia`  | `--min-amplitude`   | Min tape amplitude *(INT)*                       |
+| `-ha`  | `--halt`            | TMs can halt *(FLAG)*                            |
 
 ### 📊 Output Control
-| Short  | Long                | Description                         |
-|--------|---------------------|-------------------------------------|
-| `-sa`  | `--show-all-tape`   | Show all tape iterations            |
-| `-ht`  | `--hide-tape`       | Hide tape output                    |
-| `-hh`  | `--hide-header`     | Hide table header                   |
-| `-hr`  | `--hide-rules`      | Hide rule output                    |
-| `-hc`  | `--hide-color`      | Disable colorized output            |
-| `-dl`  | `--delay`           | Delay in microseconds (default: 50000) |
+| Short  | Long                | Description                                      |
+|--------|---------------------|--------------------------------------------------|
+| `-sa`  | `--show-all-tape`   | Show all tape iterations *(FLAG)*               |
+| `-ht`  | `--hide-tape`       | Hide tape output *(FLAG)*                       |
+| `-hh`  | `--hide-header`     | Hide table header *(FLAG)*                      |
+| `-hr`  | `--hide-rules`      | Hide rule output *(FLAG)*                       |
+| `-hc`  | `--hide-color`      | Disable colorized output *(FLAG)*               |
+| `-dl`  | `--delay`           | Delay in microseconds *(INT, default: 50000)*   |
 
 ### 🎛️ Advanced Parameters
-| Short  | Long                | Description                         |
-|--------|---------------------|-------------------------------------|
-| `-rs`  | `--seed`            | Random seed (0 = current time)      |
-| `-rt`  | `--rand-tape`       | Initialize tape randomly            |
-| `-rt`  | `--rand-type`       | Random generator (0=sys, 1=rand)    |
-| `-co`  | `--context`         | Complexity context window size      |
-| `-sc`  | `--skip-complexity` | Skip complexity analysis            |
-| `-th`  | `--threshold`       | Complexity threshold                |
-| `-dt`  | `--distribution`    | Max distribution threshold          |
-| `-st`  | `--step`            | Step size for evaluation            |
-| `-tp`  | `--top`             | Number of top entries to keep       |
-
-> 🔁 **Note**: `-rt` is reused for both `--rand-tape` and `--rand-type`. These should not be used together.
-
----
-
-## 📋 Execution Modes
-
-Selected using `-md` / `--mode`:
-
-| Value | Mode Name             | Description                         |
-|-------|-----------------------|-------------------------------------|
-| 1     | School (Simple)       | Basic Turing machine simulation     |
-| 2     | School (Advanced)     | Enhanced school TM search           |
-| 3     | NC Complexity         | Search top TMs by complexity        |
-| 4     | NRC                   | Non-regular complexity exploration  |
-| 5     | NRC-X                 | Extended NRC model                  |
-| 6     | Genetic               | Genetic search and evolution        |
-| 7     | Impossible            | Search for 'impossible' TMs         |
+| Short  | Long                | Description                                      |
+|--------|---------------------|--------------------------------------------------|
+| `-rs`  | `--seed`            | Random seed *(INT, 0 = current time)*           |
+| `-rp`  | `--rand-tape`       | Initialize tape randomly *(FLAG)*               |
+| `-rt`  | `--rand-type`       | Random generator *(INT: 0=sys, 1=rand)*         |
+| `-co`  | `--context`         | Complexity context window *(INT)*               |
+| `-sc`  | `--skip-complexity` | Skip complexity analysis *(FLAG)*              |
+| `-th`  | `--threshold`       | Complexity threshold *(DBL)*                    |
+| `-dt`  | `--distribution`    | Max distribution threshold *(DBL)*              |
+| `-st`  | `--step`            | Step size for evaluation *(INT)*                |
+| `-tp`  | `--top`             | Number of top entries to keep *(INT)*           |
 
 ---
 
