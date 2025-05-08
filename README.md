@@ -74,7 +74,6 @@ To see available options:
 | `-x`  | `--version`  | Display version info                |
 | `-v`  | `--verbose`  | Verbose output                      |
 | `-f`  | `--force`    | Force output overwrite              |
-| `-ha` | `--halt`     | Consider only halting TMs           |
 
 ### 🧪 Input Options
 | Short  | Long             | Description                       |
@@ -103,6 +102,7 @@ To see available options:
 | `-ms`  | `--max-time`        | Maximum simulation time             |
 | `-ma`  | `--max-amplitude`   | Maximum tape amplitude              |
 | `-ia`  | `--min-amplitude`   | Minimum tape amplitude              |
+| `-ha`  | `--halt`            | TMs can halt                        |
 
 ### 📊 Output Control
 | Short  | Long                | Description                         |
