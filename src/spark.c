@@ -834,7 +834,7 @@ int32_t main(int argc, char *argv[]){
   P->complexity       = ArgState (0,           p, argc, "-sc", "--skip-complexity");
   P->hide_rules       = ArgState (0,           p, argc, "-hr", "--hide-rules");
   P->hide_color       = ArgState (0,           p, argc, "-hc", "--hide-color");
-  P->random_tape      = ArgState (0,           p, argc, "-rt", "--rand-tape");
+  P->random_tape      = ArgState (0,           p, argc, "-rp", "--rand-tape");
  
   P->threads          = ArgNumber (DEFT,  p, argc, "-t",  "--threads", 0, 5000);
   P->initial_position = ArgNNumber(0,     p, argc, "-ip", "--initial-pos", INT_MIN, 
