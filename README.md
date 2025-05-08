@@ -67,65 +67,65 @@ To see available options:
 ## ⚙️ Command-Line Parameters
 
 ### 🧭 General Options
-| Short | Long         | Description                         |
-|-------|--------------|-------------------------------------|
-| `-h`  | `--help`     | Display help menu *(FLAG)*          |
-| `-a`  | `--about`    | Show about info *(FLAG)*            |
-| `-x`  | `--version`  | Display version info *(FLAG)*       |
-| `-v`  | `--verbose`  | Verbose output *(FLAG)*             |
-| `-f`  | `--force`    | Force output overwrite *(FLAG)*     |
+| Short | Long        | Description               | Type  | Default     |
+|-------|-------------|---------------------------|-------|-------------|
+| `-h`  | `--help`    | Display help menu         | FLAG  |             |
+| `-a`  | `--about`   | Show about info           | FLAG  |             |
+| `-x`  | `--version` | Display version info      | FLAG  |             |
+| `-v`  | `--verbose` | Verbose output            | FLAG  |             |
+| `-f`  | `--force`   | Force output overwrite    | FLAG  |             |
 
 ### 🧪 Input Options
-| Short  | Long             | Description                          |
-|--------|------------------|--------------------------------------|
-| `-in`  | `--input`         | Input sequence file *(FILE)*         |
-| `-ir`  | `--input-rules`   | Input rules file *(FILE)*            |
-| `-it`  | `--input-tape`    | Input tape file *(FILE)*             |
-| `-al`  | `--alphabet`      | Custom alphabet string *(STR)*       |
+| Short  | Long            | Description             | Type  | Default     |
+|--------|------------------|-------------------------|-------|-------------|
+| `-in`  | `--input`        | Input sequence file     | FILE  |             |
+| `-ir`  | `--input-rules`  | Input rules file        | FILE  |             |
+| `-it`  | `--input-tape`   | Input tape file         | FILE  |             |
+| `-al`  | `--alphabet`     | Custom alphabet string  | STR   |             |
 
 ### 📤 Output Options
-| Short  | Long             | Description                          |
-|--------|------------------|--------------------------------------|
-| `-ot`  | `--output-tape`  | Output tape file *(FILE)*            |
-| `-ox`  | `--output-top`   | Output top complexity file *(FILE)*  |
+| Short  | Long            | Description               | Type  | Default     |
+|--------|------------------|---------------------------|-------|-------------|
+| `-ot`  | `--output-tape`  | Output tape file          | FILE  |             |
+| `-ox`  | `--output-top`   | Output top file           | FILE  | `"top"`     |
 
 ### 🧮 Simulation Parameters
-| Short  | Long                | Description                                      |
-|--------|---------------------|--------------------------------------------------|
-| `-as`  | `--alphabet-size`   | Alphabet size *(INT: 2–254, default: 4)*         |
-| `-sn`  | `--states-number`   | Number of states *(INT, default: 7)*             |
-| `-ip`  | `--initial-pos`     | Initial tape position *(INT)*                    |
-| `-is`  | `--initial-state`   | Initial state *(INT)*                            |
-| `-md`  | `--mode`            | Execution mode *(INT: 1–7)*                      |
-| `-tm`  | `--machines`        | Machines per thread *(INT, default: 10000)*      |
-| `-t`   | `--threads`         | Number of threads *(INT)*                        |
-| `-ms`  | `--max-time`        | Max time before halt *(INT)*                     |
-| `-ma`  | `--max-amplitude`   | Max tape amplitude *(INT)*                       |
-| `-ia`  | `--min-amplitude`   | Min tape amplitude *(INT)*                       |
-| `-ha`  | `--halt`            | TMs can halt *(FLAG)*                            |
+| Short  | Long              | Description                     | Type  | Default     |
+|--------|-------------------|----------------------------------|-------|-------------|
+| `-as`  | `--alphabet-size` | Alphabet size (2–254)           | INT   | 4           |
+| `-sn`  | `--states-number` | Number of states                | INT   | 7           |
+| `-ip`  | `--initial-pos`   | Initial tape position           | INT   | 0           |
+| `-is`  | `--initial-state` | Initial state                   | INT   | 0           |
+| `-md`  | `--mode`          | Execution mode (1–7)            | INT   | 1           |
+| `-tm`  | `--machines`      | Machines per thread             | INT   | 10000       |
+| `-t`   | `--threads`       | Number of threads               | INT   | 4           |
+| `-ms`  | `--max-time`      | Max simulation time             | INT   | 10000       |
+| `-ma`  | `--max-amplitude` | Maximum tape amplitude          | INT   | 20000       |
+| `-ia`  | `--min-amplitude` | Minimum tape amplitude          | INT   | 50          |
+| `-ha`  | `--halt`          | Allow halting                   | FLAG  |             |
 
 ### 📊 Output Control
-| Short  | Long                | Description                                      |
-|--------|---------------------|--------------------------------------------------|
-| `-sa`  | `--show-all-tape`   | Show all tape iterations *(FLAG)*               |
-| `-ht`  | `--hide-tape`       | Hide tape output *(FLAG)*                       |
-| `-hh`  | `--hide-header`     | Hide table header *(FLAG)*                      |
-| `-hr`  | `--hide-rules`      | Hide rule output *(FLAG)*                       |
-| `-hc`  | `--hide-color`      | Disable colorized output *(FLAG)*               |
-| `-dl`  | `--delay`           | Delay in microseconds *(INT, default: 50000)*   |
+| Short  | Long              | Description                     | Type  | Default     |
+|--------|-------------------|----------------------------------|-------|-------------|
+| `-sa`  | `--show-all-tape` | Show all tape iterations        | FLAG  |             |
+| `-ht`  | `--hide-tape`     | Hide tape output                | FLAG  |             |
+| `-hh`  | `--hide-header`   | Hide table header               | FLAG  |             |
+| `-hr`  | `--hide-rules`    | Hide rule output                | FLAG  |             |
+| `-hc`  | `--hide-color`    | Disable colorized output        | FLAG  |             |
+| `-dl`  | `--delay`         | Delay in microseconds           | INT   | 50000       |
 
 ### 🎛️ Advanced Parameters
-| Short  | Long                | Description                                      |
-|--------|---------------------|--------------------------------------------------|
-| `-rs`  | `--seed`            | Random seed *(INT, 0 = current time)*           |
-| `-rp`  | `--rand-tape`       | Initialize tape randomly *(FLAG)*               |
-| `-rt`  | `--rand-type`       | Random generator *(INT: 0=sys, 1=rand)*         |
-| `-co`  | `--context`         | Complexity context window *(INT)*               |
-| `-sc`  | `--skip-complexity` | Skip complexity analysis *(FLAG)*              |
-| `-th`  | `--threshold`       | Complexity threshold *(DBL)*                    |
-| `-dt`  | `--distribution`    | Max distribution threshold *(DBL)*              |
-| `-st`  | `--step`            | Step size for evaluation *(INT)*                |
-| `-tp`  | `--top`             | Number of top entries to keep *(INT)*           |
+| Short  | Long                | Description                    | Type  | Default     |
+|--------|---------------------|--------------------------------|-------|-------------|
+| `-rs`  | `--seed`            | Random seed (0 = time-based)   | INT   | 0           |
+| `-rp`  | `--rand-tape`       | Random tape initialization     | FLAG  |             |
+| `-rt`  | `--rand-type`       | RNG type (0=sys, 1=rand)       | INT   | 0           |
+| `-co`  | `--context`         | Complexity context window      | INT   | 2           |
+| `-sc`  | `--skip-complexity` | Skip complexity analysis       | FLAG  |             |
+| `-th`  | `--threshold`       | Complexity or NRC threshold    | DBL   | 0.5         |
+| `-dt`  | `--distribution`    | Max distribution threshold     | DBL   | 0.6         |
+| `-st`  | `--step`            | Step size for evaluation       | INT   | 100         |
+| `-tp`  | `--top`             | Number of top entries to keep  | INT   | 5           |
 
 ---
 
