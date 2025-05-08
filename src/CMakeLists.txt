@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.4)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lpthread -lm -O3 ")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Ofast -march=native -flto -ffast-math -fomit-frame-pointer -funroll-loops -lpthread -lm -w ")
 IF(UNIX)
  link_libraries(m)
 ENDIF(UNIX)

@@ -7,6 +7,8 @@
 #include <inttypes.h>
 #include <unistd.h>
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 typedef uint64_t ULL;
 typedef uint64_t U64;
 typedef uint32_t U32;
@@ -17,11 +19,14 @@ typedef int32_t  I32;
 typedef int16_t  I16;
 typedef int8_t   I8;
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 typedef struct{
   U8        help;
   U8        verbose;
   U8        force;
   U8        show_tape;
+  U8        hide_header;
   U8        hide_tape;
   U8        hide_color;
   U8        show_action;
@@ -32,6 +37,7 @@ typedef struct{
   uint32_t  top;
   uint32_t  threads;
   double    threshold;
+  double    max_distribution;
   uint32_t  alphabet_size;
   uint32_t  number_of_states;
   uint32_t  max_time;
@@ -43,6 +49,7 @@ typedef struct{
   uint8_t   random_tape;
   uint32_t  seed;
   uint32_t  delay;
+  uint32_t  step;
   uint32_t  ctx;
   uint32_t  lcf_value;
   uint32_t  lcf_a;
@@ -65,8 +72,8 @@ THREADS;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#define RELEASE                2
-#define VERSION                1
+#define RELEASE                1
+#define VERSION                2
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

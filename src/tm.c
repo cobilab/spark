@@ -8,7 +8,7 @@
 // - - - - - - - - - - - C A L C U L A T E   A M P L I T U D E - - - - - - - - -
 
 uint32_t GetAmplitude(TAPE *TP){
-  return TP->maximum_position - TP->minimum_position + 1;
+  return TP->max_position - TP->min_position + 1;
   }
 
 // =============================================================================
@@ -16,10 +16,8 @@ uint32_t GetAmplitude(TAPE *TP){
 
 void PrintActions(TM *T){
 
-  uint32_t x;
-
   fprintf(stderr, "Actions        : ");
-  for(x = 0 ; x < MAXIMUM_MOVES ; ++x)
+  for(uint32_t x = 0 ; x < MAXIMUM_MOVES ; ++x)
     if(x == MAXIMUM_MOVES-1 && !T->halt) 
       fprintf(stderr, " %c",  T->moves[x]);
     else 
@@ -36,10 +34,8 @@ void PrintActions(TM *T){
 
 void PrintAlphabet(TM *T){
 
-  uint32_t x;
-
   fprintf(stderr, "Alphabet       : ");
-  for(x = 0 ; x < T->alphabet_size ; ++x)
+  for(uint32_t x = 0 ; x < T->alphabet_size ; ++x)
     if(x == T->alphabet_size-1) 
       fprintf(stderr, " %s%c%s", colors[x % MAX_COLOR],
       T->alphabet->out_string[x], normal_color);
@@ -56,10 +52,8 @@ void PrintAlphabet(TM *T){
 
 void PrintStates(TM *T){
 
-  uint32_t x;
-
   fprintf(stderr, "States         : ");
-  for(x = 0 ; x < T->number_of_states ; ++x)
+  for(uint32_t x = 0 ; x < T->number_of_states ; ++x)
     if(x == T->number_of_states-1) fprintf(stderr, " %u",  x);
     else                           fprintf(stderr, " %u,", x);
   fprintf(stderr, "\n");
@@ -72,10 +66,8 @@ void PrintStates(TM *T){
 
 void PrintTapeFile(TM *T, uint8_t *filename){
 
-  uint32_t x;
-
   FILE *OUT = Fopen(filename, "w");
-  for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
+  for(uint32_t x = T->tape->min_position ; x < T->tape->max_position ; ++x)
     fprintf(OUT, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(OUT, "\n");
   fclose(OUT);
@@ -88,11 +80,9 @@ void PrintTapeFile(TM *T, uint8_t *filename){
 
 void PrintTapeInWritter(TM *T, FILE *F){
 
-  uint32_t x;
-
-  for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
+  for(uint32_t x = T->tape->min_position ; x < T->tape->max_position ; ++x)
     fprintf(F, "%c", T->alphabet->out_string[T->tape->string[x]]);
-  fprintf(F, "\n");
+  fprintf(F, "\t");
 
   return;
   }
@@ -102,15 +92,12 @@ void PrintTapeInWritter(TM *T, FILE *F){
 
 void PrintRulesInWritter(TM *T, FILE *F){
 
-  uint32_t x, y;
-
-  for(x = 0 ; x < T->alphabet_size ; ++x){
-    for(y = 0 ; y < T->number_of_states ; ++y){
+  for(uint32_t x = 0 ; x < T->alphabet_size ; ++x)
+    for(uint32_t y = 0 ; y < T->number_of_states ; ++y){
       fprintf(F, "%u%c%u,",
       T->alphabet->string[T->rules[x][y].new_write],
       T->rules[x][y].move, T->rules[x][y].new_state);
       }
-    }
 
   fprintf(F, "\t");
 
@@ -150,6 +137,18 @@ void LoadTMRules(TM *T, uint8_t *name){
   }
 
 // =============================================================================
+// - - - - - - - - - - - - L O A D   R A N D O M   T A P E - - - - - - - - - - -
+
+void LoadTMRandTape(TM *T, RAND *R){
+  
+  for(uint32_t x = 0 ; x < T->tape->length ; ++x){
+    T->tape->string[x] = GetRandNumber(R) % T->alphabet_size;
+    }
+
+  return;
+  }
+
+// =============================================================================
 // - - - - - - - - - - - - L O A D   F I L E   I N   T A P E - - - - - - - - - -
 
 void LoadTMTape(TM *T, uint8_t *name){
@@ -166,7 +165,7 @@ void LoadTMTape(TM *T, uint8_t *name){
 
   if(length >= T->tape->length){
     fprintf(stderr, "Error: tape is longer than %u\n", 
-    T->tape->maximum_position);
+    T->tape->max_position);
     exit(1);
     }
 
@@ -180,13 +179,13 @@ void LoadTMTape(TM *T, uint8_t *name){
       }
     if(in == 1){
         
-      if(T->tape->current_position > T->tape->maximum_position)
-        T->tape->maximum_position = T->tape->current_position;
+      if(T->tape->current_position > T->tape->max_position)
+        T->tape->max_position = T->tape->current_position;
 
-      if(T->tape->current_position < T->tape->minimum_position)
-        T->tape->minimum_position = T->tape->current_position;
+      if(T->tape->current_position < T->tape->min_position)
+        T->tape->min_position = T->tape->current_position;
       
-      ++T->tape->maximum_position;
+      ++T->tape->max_position;
       ++T->tape->current_position;
      
       T->tape->string[T->tape->current_position] = T->alphabet->rev_map[c];
@@ -207,9 +206,7 @@ void LoadTMTape(TM *T, uint8_t *name){
 
 void PrintTape(TM *T){
 
-  int x;
-
-  for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
+  for(uint32_t x = T->tape->min_position ; x < T->tape->max_position ; ++x)
     fprintf(stderr, "%c", T->alphabet->out_string[T->tape->string[x]]);
   fprintf(stderr, "\n");
 
@@ -221,12 +218,10 @@ void PrintTape(TM *T){
 
 void PrintTapePres(TM *T, double delay){
 
-  int x;
-
   usleep(delay);
 
   fprintf(stderr, "Time [%lu] | Tape: ", T->tape->time);
-  for(x = T->tape->minimum_position ; x < T->tape->maximum_position ; ++x)
+  for(uint32_t x = T->tape->min_position ; x < T->tape->max_position ; ++x)
     fprintf(stderr, "%s%c%s", colors[T->tape->string[x] % MAX_COLOR], 
     T->alphabet->out_string[T->tape->string[x]], normal_color);
   fprintf(stderr, "\r");
@@ -266,9 +261,9 @@ void PrintTM(TM *T){
 // - - - - - - - - - - - - - - - C R E A T E   T M - - - - - - - - - - - - - - -
 
 TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t 
-  number_of_states, uint32_t maximum_time, uint32_t maximum_amplitude, 
-  uint32_t minimum_amplitude, uint8_t mode, uint32_t initial_state, int32_t 
-  initial_position){
+  number_of_states, uint32_t max_time, uint32_t max_amplitude, uint32_t 
+  min_amplitude, double max_distribution, uint8_t mode, uint32_t initial_state, 
+  int32_t initial_position){
   
   uint32_t x;
 
@@ -277,9 +272,10 @@ TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t
   T->halt              = halt;
   T->alphabet_size     = alphabet_size;
   T->number_of_states  = number_of_states;
-  T->maximum_time      = maximum_time;
-  T->maximum_amplitude = maximum_amplitude;
-  T->minimum_amplitude = minimum_amplitude;
+  T->max_time          = max_time;
+  T->max_amplitude     = max_amplitude;
+  T->min_amplitude     = min_amplitude;
+  T->max_distribution  = max_distribution;
   T->initial_state     = initial_state;
   T->current_state     = T->initial_state;
   T->initial_position  = initial_position;
@@ -296,18 +292,17 @@ TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t
 
   T->tape = (TAPE *) Calloc(1, sizeof(TAPE));
 
-  assert(T->maximum_time > T->tape->guard);
+  assert(T->max_time > T->tape->guard);
 
   T->tape->time             = 0;
   T->tape->guard            = DEFAULT_TAPE_GUARD;
-  
-  T->tape->length           = DEFAULT_TAPE_LENGTH + 1;
-  T->tape->current_position = DEFAULT_TAPE_INITIAL_POSITION + 1;
+  T->tape->length           = T->max_time * 2 + 1;
+  T->tape->current_position = T->max_time + 1;
+  T->tape->min_position     = T->tape->current_position - T->tape->guard;
+  T->tape->max_position     = T->tape->current_position + T->tape->guard;
 
-  T->tape->minimum_position = T->tape->current_position - T->tape->guard;
-  T->tape->maximum_position = T->tape->current_position + T->tape->guard;
-  T->tape->string           = (uint8_t *) Calloc(T->tape->length + T->tape->guard, 
-		              sizeof(uint8_t));
+  T->tape->string           = (uint8_t *) Calloc((T->tape->length + 
+		              2 * T->tape->guard), sizeof(uint8_t));
 
   T->alphabet = (ALPHABET *) Calloc(1, sizeof(ALPHABET));
 
@@ -345,8 +340,7 @@ TM *CreateTM(uint8_t halt, uint8_t *alphabet, uint32_t alphabet_size, uint32_t
 
 uint8_t UpdateTM(TM *T){
 
-  if(T->tape->time > T->maximum_time || 
-     T->maximum_amplitude < GetAmplitude(T->tape))
+  if(T->tape->time > T->max_time || T->max_amplitude < GetAmplitude(T->tape))
     return 1;
   else if(T->tape->current_position == T->tape->length || 
 	  T->tape->current_position == 0)
@@ -356,7 +350,7 @@ uint8_t UpdateTM(TM *T){
 	    [T->current_state];
 
   T->tape->string[T->tape->current_position] = R->new_write;
-  
+ 
   switch(R->move){
     case '<': T->tape->current_position--; break;
     case '>': T->tape->current_position++; break;
@@ -368,11 +362,11 @@ uint8_t UpdateTM(TM *T){
 
   T->current_state = R->new_state;
 
-  if(T->tape->current_position > T->tape->maximum_position)
-    T->tape->maximum_position = T->tape->current_position;
+  if(T->tape->current_position > T->tape->max_position)
+    T->tape->max_position = T->tape->current_position;
 
-  if(T->tape->current_position < T->tape->minimum_position)
-    T->tape->minimum_position = T->tape->current_position;
+  if(T->tape->current_position < T->tape->min_position)
+    T->tape->min_position = T->tape->current_position;
 
   T->tape->time++;
 
@@ -385,14 +379,14 @@ uint8_t UpdateTM(TM *T){
 void ResetTape(TM *T){
   
   T->tape->guard            = DEFAULT_TAPE_GUARD;
-  T->tape->length           = T->maximum_time * 2 + 1;
-  T->tape->current_position = T->maximum_time + 1;
-  T->tape->minimum_position = T->tape->current_position - T->tape->guard;
-  T->tape->maximum_position = T->tape->current_position + T->tape->guard;
+  T->tape->length           = T->max_time * 2 + 1;
+  T->tape->current_position = T->max_time + 1;
+  T->tape->min_position     = T->tape->current_position - T->tape->guard;
+  T->tape->max_position     = T->tape->current_position + T->tape->guard;
   T->tape->time             = 0;
 
-  memset((void *) T->tape->string, 0, T->tape->length +
-                  T->tape->guard * sizeof(char));
+  memset((void *) T->tape->string, 0, (T->tape->length +
+                  2 * T->tape->guard) * sizeof(char));
 
   return;
   }
@@ -402,14 +396,13 @@ void ResetTape(TM *T){
 
 uint8_t RandFillTM(TM *T, RAND *R){
 
-  uint32_t x, y;
-
-  for(x = 0 ; x < T->alphabet_size ; ++x)
-    for(y = 0 ; y < T->number_of_states ; ++y){
+  for(uint32_t x = 0 ; x < T->alphabet_size ; ++x)
+    for(uint32_t y = 0 ; y < T->number_of_states ; ++y){
       T->rules[x][y].new_write = GetRandNumber(R) % T->alphabet_size;
       T->rules[x][y].move      = T->moves[GetRandNumber(R) % MAXIMUM_MOVES];
       T->rules[x][y].new_state = GetRandNumber(R) % T->number_of_states;
       }
+ 
   if(T->halt){
     T->rules[GetRandNumber(R) % T->alphabet_size]
 	    [GetRandNumber(R) % T->number_of_states].move = '.';
@@ -420,14 +413,44 @@ uint8_t RandFillTM(TM *T, RAND *R){
   return 0;
   }
 
+
+// =============================================================================
+// - - - - - - - - - - - - R E S E T   D I S T R I B U T I O N - - - - - - - - -
+void ResetDist(TM *T){
+  
+  memset(T->alphabet->counts, 0, 256 * sizeof(uint32_t));
+
+  return;
+  }
+
+// =============================================================================
+// - - - - - - - - - - E V A L U A T E   D I S T R I B U T I O N - - - - - - - -
+
+int8_t EvalTapeDist(uint32_t amp, TM *T){
+
+  assert(amp > 0);
+
+  ResetDist(T);
+  for(uint32_t x = T->tape->min_position ; x < T->tape->max_position ; ++x)
+    T->alphabet->counts[T->tape->string[x]]++;
+
+  uint32_t max = T->alphabet->counts[0];
+  for(uint32_t i = 1 ; i < T->alphabet_size ; ++i)
+    if(T->alphabet->counts[i] > max)
+      max = T->alphabet->counts[i];
+
+  if((double) max / amp > T->max_distribution)
+    return 0; // CODE '0' TO STOP MACHINE
+  
+  return 1; // CODE '1' TO CONTINUE
+  }
+
 // =============================================================================
 // - - - - - - - - - - - - - - - - R E M O V E   T M - - - - - - - - - - - - - -
 
 void RemoveTM(TM *T){
 
-  uint32_t x;
-
-  for(x = 0 ; x < T->alphabet_size ; ++x)
+  for(uint32_t x = 0 ; x < T->alphabet_size ; ++x)
     Free(T->rules[x]);
   Free(T->rules);
   Free(T->tape->string);
