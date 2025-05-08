@@ -48,11 +48,18 @@ or
 </pre>
 this will output the following
 ```
+                                                                     
+     ███████  ███████  ███████  ███████  ██   ███                    
+     ██       ██   ██  ██   ██  ██   ██  ██  ███                     
+     ███████  ███████  ███████  ███████  ██████                      
+          ██  ██       ██   ██  ██ ███   ██  ███                     
+     ███████  ██       ██   ██  ██  ███  ██   ███                    
+                                                                     
 NAME                                                                 
-     SPARK, v1-r2.                                                 
+     SPARK, v2-r1.                                                 
                                                                      
 SYNOPSIS                                                             
-     ./SPARK [OPTION]...                                             
+     ./SPARK [OPTION(S)]...                                          
                                                                      
 DESCRIPTION                                                          
      This program schools, simulates, and searches for exact or      
@@ -69,10 +76,11 @@ ARGUMENTS
      -sc,       --skip-complexity,      skip complexity process,     
      -ha,       --halt,                 consider the machine halts,  
      -ht,       --hide-tape,            hide tape output,            
+     -hh,       --hide-header,          hide header output,          
      -sa,       --show-all-tape,        show all tape iterations,    
      -hr,       --hide-rules,           hide rules in top file,      
                                                                      
-     -rt,       --random-tape,          random tape (input size),    
+     -rt,       --rand-tape,            random tape (input size),    
                                                                      
      -ip <INT>, --initial-pos   <INT>,  initial position to start,   
      -is <INT>, --initial-state <INT>,  initial state to start,      
@@ -81,6 +89,8 @@ ARGUMENTS
      -ms <INT>, --max-time <INT>,       maximum time before halt,    
      -ma <INT>, --max-amplitude <INT>,  maximum tape amplitude,      
      -ia <INT>, --min-amplitude <INT>,  minimum tape amplitude,      
+     -dt <INT>, --distribution  <DBL>,  max distribution threshold,  
+     -st <INT>, --step <INT>,           step to evaluate machine,    
      -tm <INT>, --machines <INT>,       machines number by thread,   
                                                                      
      -al <STR>, --alphabet <STR>,       alphabet to use (String),    
@@ -97,22 +107,23 @@ ARGUMENTS
                                           2 - School (advanced),     
                                           3 - NC-Complexity top,     
                                           4 - NRC search,            
-                                          5 - X search,              
-                                          6 - Impossible,            
+                                          5 - NRC X search,          
+                                          6 - Genetic,               
+                                          7 - Impossible,            
                                                                      
      -ot <FILE>, --output-tape <FILE>,  output TM tape to file,      
      -ox <FILE>, --output-top  <FILE>,  output complexity top,       
      -ir <FILE>, --input-rules <FILE>,  load input rules for TM,     
      -it <FILE>, --input-tape  <FILE>,  load input tape for TM,      
                                                                      
-     -i <FILE>, --input <FILE>,         input sequence filename.     
+     -in <FILE>, --input <FILE>,        input sequence filename.     
                                                                      
 EXAMPLES                                                             
      ./SPARK --alphabet-size 5 --states-number 5 --input seq.txt     
      ./SPARK --top 50 --mode 3 --states-number 9 --input seq.txt     
                                                                      
 COPYRIGHT                                                            
-     Copyright 2017-2024, D. Pratas, IEETA, University of Aveiro.    
+     Copyright 2017-2025, D. Pratas, IEETA, University of Aveiro.    
      License GPLv3, GNU GPLv3 <http://gnu.org/licenses/gpl.html>.
 ```
 
