@@ -676,18 +676,16 @@ void ComplexityTMs(THREADS T){
         amp = GetAmplitude(TM->tape);
         if(TM->min_amplitude < amp && TM->max_amplitude > amp){
 
-          if(time > MIN_DIST_TIME && EvalTapeDist(amp, TM) == 0){
+          if(time > MIN_DIST_TIME && EvalTapeDist(amp, TM) == 0)
             break;
-            }
 
-          plex = GetTapeComplexity(TM);
-          if(plex > P->threshold){
+          if((plex = GetTapeComplexity(TM)) > P->threshold){
             if(P->verbose)
               PrintTopTM(time, plex, P->seed, amp, i_state, TM, stdout);
             PrintTopTM(time, plex, P->seed, amp, i_state, TM, Writter);
             }
           }
-        }
+	}
       }
     }
 
